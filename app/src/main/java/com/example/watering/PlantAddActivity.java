@@ -8,6 +8,11 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,27 +56,26 @@ public class PlantAddActivity extends AppCompatActivity {
 
     private int pListSize;
 
-    //final static int TAKE_PICTURE = 1;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    ImageView plantImageView;
     String currentPhotoPath;
-    Uri photoURI;
+    final static int REQUEST_TAKE_PHOTO = 1;
 
 
-    private File createImageFile() throws IOException {
-        // 이미지 파일 이름 생성
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    private File createImageFile() throws IOException{
+        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
+                imageFileName,  //prefix
+                ".jpg",         // suffix
+                storageDir    // directory
         );
 
         // 파일 저장 : path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -79,20 +83,20 @@ public class PlantAddActivity extends AppCompatActivity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-            } catch (IOException ex) {
-                // 파일 생성시 에러 발생
+            } catch (IOException ex) { // 파일 생성시 에러 발생
+                //Log.w("PlantAddActivity", "사진 파일 생성 에러!", ex);
             }
+
             // 파일 성공적 생성시 계속 실행
             if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(this,
-                        "com.example.watering", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.watering.fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
     ///// 카메라 촬영 /////
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,9 +123,9 @@ public class PlantAddActivity extends AppCompatActivity {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                Log.d("TAG", "권한 설정 완료");
+                Log.d("PlantAddActivity", "권한 설정 완료");
             } else {
-                Log.d("TAG", "권한 설정 요청");
+                Log.d("PlantAddActivity", "권한 설정 요청");
                 ActivityCompat.requestPermissions(PlantAddActivity.this,
                         new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
@@ -132,7 +136,14 @@ public class PlantAddActivity extends AppCompatActivity {
         buttonCameraPhoto.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                dispatchTakePictureIntent();
+                switch (v.getId()){
+                    case R.id.PA_Camera:
+                        //Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        //startActivityForResult(cameraIntent, TAKE_PICTURE);
+                        dispatchTakePictureIntent();
+                        break;
+                }
+                //dispatchTakePictureIntent();
             }
         });
 
@@ -145,6 +156,11 @@ public class PlantAddActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // 촬영한 사진 이미지뷰
+        plantImageView = (ImageView)findViewById(R.id.PA_IMAGE);
+
+
 
         // 저장 버튼 : 식물 생성 - firebase 저장
         Button buttonSavePlant = (Button)findViewById(R.id.PA_SavePlant);
@@ -178,39 +194,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
             } // buttonSavePlant - onClick
         }); // buttonSavePlant - onClickListener
-
-
-
 /*
-        // 검색 버튼
-        Button buttonSearchPlant = (Button)findViewById(R.id.PA_Search);
-        buttonSearchPlant.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                String plantGroup = "과과과";
-                // EditText 입력 값 : 식물 이름
-                EditText PN = (EditText) findViewById(R.id.PA_textbox);
-                String plantName = PN.getText().toString();
-                String plantUrl = "https://ko.wikipedia.org/wiki/" + plantName;
-                
-                try {
-                    Document document = Jsoup.connect(plantUrl).get();
-                    Elements elems = document.select("table.infobox tbody tr:eq(3)").select("td table tbody tr:eq(5)");
-                    for(Element element : elems){
-                        String st = element.select("td:eq(1) a").text();
-                        if(st.substring(st.length()-1).equals("과")){
-                            plantGroup = st;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getApplicationContext(), plantGroup, Toast.LENGTH_LONG).show();
-
-            }
-        });
-*/
-
 // WebView
         WebView webView = (WebView) findViewById(R.id.PA_WebView);
         webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
@@ -228,45 +212,138 @@ public class PlantAddActivity extends AppCompatActivity {
             }
         }
         webView.setWebViewClient(new WebViewClientClass ());
-/*
-        // WebView
-        WebView webView = (WebView) findViewById(R.id.PA_WebView);
-        webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
-        String plantUrl = "https://ko.wikipedia.org/wiki/" + "장미";
-        webView.loadUrl(plantUrl);
-        //webView.loadUrl("https://images.google.com"); // 웹뷰 실행
-        webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
-        class WebViewClientClass extends WebViewClient { // 페이지 이동
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView wv, String url){
-                Log.d("check URL", url);
-                webView.loadUrl(url);
-                return true;
-            }
-        }
-        webView.setWebViewClient(new WebViewClientClass ());
 */
-
-
-
-
     } //onCreate
+
+    // 권한 요청
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("PlantAddActivity", "onRequestPermissionsResult");
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1]
+                == PackageManager.PERMISSION_GRANTED ) {
+            Log.d("PlantAddActivity", "Permission: " + permissions[0] + "was " + grantResults[0]);
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        if(requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //Bundle extras = intent.getExtras();
-            //Bitmap imgBitmap = (Bitmap) extras.get("data");
-            //intent.getData(); // 찍은 사진의 data
-            //imageView.setImageURI(photoURI);
-            ((ImageView)findViewById(R.id.PA_IMAGE)).setImageURI(photoURI);
+        try{
+            switch(requestCode){
+                case REQUEST_TAKE_PHOTO:{
+                    if(resultCode == RESULT_OK){
+                        File file = new File(currentPhotoPath);
+                        Bitmap bitmap;
+
+                        if(Build.VERSION.SDK_INT >= 29){
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver()
+                            , Uri.fromFile(file));
+                            try{
+                                bitmap = ImageDecoder.decodeBitmap(source);
+                                if(bitmap != null){ //plantImageView.setImageBitmap(bitmap);
+                                    ExifInterface ei = new ExifInterface(currentPhotoPath);
+                                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                            ExifInterface.ORIENTATION_UNDEFINED);
+                                    Bitmap rotatedBitmap = null;
+                                    switch(orientation){
+                                        case ExifInterface.ORIENTATION_ROTATE_90:
+                                            rotatedBitmap = rotateImage(bitmap, 90);
+                                            break;
+                                        case ExifInterface.ORIENTATION_ROTATE_180:
+                                            rotatedBitmap = rotateImage(bitmap, 180);
+                                            break;
+                                        case ExifInterface.ORIENTATION_ROTATE_270:
+                                            rotatedBitmap = rotateImage(bitmap, 270);
+                                            break;
+                                        case ExifInterface.ORIENTATION_NORMAL:
+                                        default:
+                                            rotatedBitmap = bitmap;
+                                    }
+                                    plantImageView.setImageBitmap(rotatedBitmap);
+                                }
+                            }catch(IOException e){
+                                //
+                            }
+                        }
+                        else{
+                            try{
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
+                                if(bitmap != null){ //plantImageView.setImageBitmap(bitmap);
+                                    ExifInterface ei = new ExifInterface(currentPhotoPath);
+                                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                            ExifInterface.ORIENTATION_UNDEFINED);
+                                    Bitmap rotatedBitmap = null;
+                                    switch(orientation){
+                                        case ExifInterface.ORIENTATION_ROTATE_90:
+                                            rotatedBitmap = rotateImage(bitmap, 90);
+                                            break;
+                                        case ExifInterface.ORIENTATION_ROTATE_180:
+                                            rotatedBitmap = rotateImage(bitmap, 180);
+                                            break;
+                                        case ExifInterface.ORIENTATION_ROTATE_270:
+                                            rotatedBitmap = rotateImage(bitmap, 270);
+                                            break;
+                                        case ExifInterface.ORIENTATION_NORMAL:
+                                        default:
+                                            rotatedBitmap = bitmap;
+                                    }
+                                    plantImageView.setImageBitmap(rotatedBitmap);
+                                }
+                            }catch (IOException e){
+                                //
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }catch (Exception e){
+
         }
 
     } // onActivityResult
+
+    public static Bitmap rotateImage(Bitmap source, float degree){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight()
+                , matrix, true);
+    }
+
 } // PlantAddActivity
 
+/*
+        // 검색 버튼
+        Button buttonSearchPlant = (Button)findViewById(R.id.PA_Search);
+        buttonSearchPlant.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String plantGroup = "과과과";
+                // EditText 입력 값 : 식물 이름
+                EditText PN = (EditText) findViewById(R.id.PA_textbox);
+                String plantName = PN.getText().toString();
+                String plantUrl = "https://ko.wikipedia.org/wiki/" + plantName;
+
+                try {
+                    Document document = Jsoup.connect(plantUrl).get();
+                    Elements elems = document.select("table.infobox tbody tr:eq(3)").select("td table tbody tr:eq(5)");
+                    for(Element element : elems){
+                        String st = element.select("td:eq(1) a").text();
+                        if(st.substring(st.length()-1).equals("과")){
+                            plantGroup = st;
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getApplicationContext(), plantGroup, Toast.LENGTH_LONG).show();
+
+            }
+        });
+*/
   /*
                 // 해당 아이디의 존재하는 식물 목록 수 카운트
                 databaseReference.addValueEventListener(new ValueEventListener() {
