@@ -12,12 +12,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
@@ -37,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,7 +63,7 @@ public class PlantAddActivity extends AppCompatActivity {
     ImageView plantImageView;
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
-
+    Uri photoURI;
 
     private File createImageFile() throws IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -89,7 +93,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
             // 파일 성공적 생성시 계속 실행
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
+                photoURI = FileProvider.getUriForFile(this,
                         "com.example.watering.fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -180,7 +184,13 @@ public class PlantAddActivity extends AppCompatActivity {
                 plantLastWater = simpleDateFormat.format(today);
 
                 // 식물 사진 정보
-                plantPhoto = "not yet";
+                //plantImageView.setImageURI(photoURI);
+                Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+                plantPhoto = byteArrayToBinaryString(data);
+
 
                 // 식물 생성
                 Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhoto);
@@ -194,25 +204,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
             } // buttonSavePlant - onClick
         }); // buttonSavePlant - onClickListener
-/*
-// WebView
-        WebView webView = (WebView) findViewById(R.id.PA_WebView);
-        webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
-        String plantUrl = "https://www.google.co.kr/imghp?hl=ko";
-        //String plantUrl = "https://ko.wikipedia.org/wiki/" + "장미";
-        webView.loadUrl(plantUrl);
-        //webView.loadUrl("https://images.google.com"); // 웹뷰 실행
-        webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
-        class WebViewClientClass extends WebViewClient { // 페이지 이동
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView wv, String url){
-                Log.d("check URL", url);
-                webView.loadUrl(url);
-                return true;
-            }
-        }
-        webView.setWebViewClient(new WebViewClientClass ());
-*/
+
     } //onCreate
 
     // 권한 요청
@@ -263,6 +255,7 @@ public class PlantAddActivity extends AppCompatActivity {
                                             rotatedBitmap = bitmap;
                                     }
                                     plantImageView.setImageBitmap(rotatedBitmap);
+
                                 }
                             }catch(IOException e){
                                 //
@@ -313,8 +306,46 @@ public class PlantAddActivity extends AppCompatActivity {
                 , matrix, true);
     }
 
-} // PlantAddActivity
+    public static String byteArrayToBinaryString(byte[] b) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < b.length; ++i) {
+            sb.append(byteToBinaryString(b[i]));
+        }
+        return sb.toString();
+    }
+    public static String byteToBinaryString(byte n) {
+        StringBuilder sb = new StringBuilder("00000000");
+        for (int bit = 0; bit < 8; bit++) {
+            if (((n >> bit) & 1) > 0) {
+                sb.setCharAt(7 - bit, '1');
+            }
+        }
+        return sb.toString();
+    }
 
+
+
+
+} // PlantAddActivity
+/*
+// WebView
+        WebView webView = (WebView) findViewById(R.id.PA_WebView);
+        webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
+        String plantUrl = "https://www.google.co.kr/imghp?hl=ko";
+        //String plantUrl = "https://ko.wikipedia.org/wiki/" + "장미";
+        webView.loadUrl(plantUrl);
+        //webView.loadUrl("https://images.google.com"); // 웹뷰 실행
+        webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
+        class WebViewClientClass extends WebViewClient { // 페이지 이동
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView wv, String url){
+                Log.d("check URL", url);
+                webView.loadUrl(url);
+                return true;
+            }
+        }
+        webView.setWebViewClient(new WebViewClientClass ());
+*/
 /*
         // 검색 버튼
         Button buttonSearchPlant = (Button)findViewById(R.id.PA_Search);
