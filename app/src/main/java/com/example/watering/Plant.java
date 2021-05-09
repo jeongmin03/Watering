@@ -39,25 +39,8 @@ public class Plant implements Serializable {
         this.plantWaterCheck = plantWaterCheck;
     }
 
-    public String getPlantName() {
-        return plantName;
-    }
-    public void setPlantName(String plantName) {
-        this.plantName = plantName;
-    }
-    public int getPlantPhoto() {
-        return 0;
-    }
-    /* public void setPlantPhoto(int plantPhoto) {
-         this.plantPhoto = plantPhoto;
-    /*
-     public String getPlantUrl() {
-         return plantUrl;
-     }
-     public void setPlantUrl(String plantUrl) {
-         this.plantUrl = plantUrl;
-     }
- */
+    public String getPlantName() { return plantName; }
+    public void setPlantName(String plantName) { this.plantName = plantName; }
     public int getPlantCycle() { return plantCycle; }
     public void setPlantCycle(int plantCycle) { this.plantCycle = plantCycle; }
     public String getPlantLastWater() { return plantLastWater; }
@@ -67,4 +50,18 @@ public class Plant implements Serializable {
     public String getPlantPhotoInfo() { return plantPhotoInfo; }
     public void setPlantPhotoInfo(String plantPhotoInfo) { this.plantPhotoInfo = plantPhotoInfo; }
 
+
+    /*  public int getPlantPhoto() {
+         return 0;
+     }
+  /* public void setPlantPhoto(int plantPhoto) {
+          this.plantPhoto = plantPhoto;
+     /*
+      public String getPlantUrl() {
+          return plantUrl;
+      }
+      public void setPlantUrl(String plantUrl) {
+          this.plantUrl = plantUrl;
+      }
+  */
 }

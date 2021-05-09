@@ -59,7 +59,6 @@ public class MyPListAdapter extends BaseAdapter {
         Bitmap bitmap = StringToBitmap(imageStr);
         plantPhoto_imageView.setImageBitmap(bitmap);
 
-
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
         return convertView;
