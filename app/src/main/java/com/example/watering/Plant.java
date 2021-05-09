@@ -6,30 +6,37 @@ import java.io.Serializable;
 
 public class Plant implements Serializable {
 
-    private int plantPhoto;
-    private String plantUrl;
+    //private int plantPhoto;
+    //private String plantUrl;
 
     private String plantName;
     private int plantCycle;
     private String plantLastWater;
-    private String plantWaterCheck;
     private String plantPhotoInfo;
+    private String plantWaterCheck;
 
     public Plant(){}
-    public Plant(String plantName){
+    /*public Plant(String plantName){
         this.plantName = plantName;
         plantPhoto = 0;
     }
     public Plant(int plantPhoto, String plantName){
         this.plantPhoto = plantPhoto;
         this.plantName = plantName;
-    }
+    }*/
     public Plant(String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo){
         this.plantName = plantName;
         this.plantCycle = plantCycle;
         this.plantLastWater = plantLastWater;
         this.plantPhotoInfo = plantPhotoInfo;
         plantWaterCheck = "false";
+    }
+    public Plant(String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo, String plantWaterCheck){
+        this.plantName = plantName;
+        this.plantCycle = plantCycle;
+        this.plantLastWater = plantLastWater;
+        this.plantPhotoInfo = plantPhotoInfo;
+        this.plantWaterCheck = plantWaterCheck;
     }
 
     public String getPlantName() {
@@ -39,18 +46,18 @@ public class Plant implements Serializable {
         this.plantName = plantName;
     }
     public int getPlantPhoto() {
-        return plantPhoto;
+        return 0;
     }
-    public void setPlantPhoto(int plantPhoto) {
-        this.plantPhoto = plantPhoto;
-    }
-    public String getPlantUrl() {
-        return plantUrl;
-    }
-    public void setPlantUrl(String plantUrl) {
-        this.plantUrl = plantUrl;
-    }
-
+    /* public void setPlantPhoto(int plantPhoto) {
+         this.plantPhoto = plantPhoto;
+    /*
+     public String getPlantUrl() {
+         return plantUrl;
+     }
+     public void setPlantUrl(String plantUrl) {
+         this.plantUrl = plantUrl;
+     }
+ */
     public int getPlantCycle() { return plantCycle; }
     public void setPlantCycle(int plantCycle) { this.plantCycle = plantCycle; }
     public String getPlantLastWater() { return plantLastWater; }

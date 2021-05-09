@@ -56,7 +56,7 @@ public class PlantAddActivity extends AppCompatActivity {
     private String plantName;
     private int plantCycle;
     private String plantLastWater;
-    private String plantPhoto;
+    private String plantPhotoInfo;
 
     private int pListSize;
 
@@ -185,15 +185,18 @@ public class PlantAddActivity extends AppCompatActivity {
 
                 // 식물 사진 정보
                 //plantImageView.setImageURI(photoURI);
-                Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
+                /*Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] data = baos.toByteArray();
                 plantPhoto = byteArrayToBinaryString(data);
-
+*/
+                BitmapDrawable drawable = (BitmapDrawable)plantImageView.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                plantPhotoInfo = BitmapToString(bitmap);
 
                 // 식물 생성
-                Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhoto);
+                Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 String plantNum = "plant" + String.valueOf(pListSize+1);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
@@ -296,7 +299,6 @@ public class PlantAddActivity extends AppCompatActivity {
         }catch (Exception e){
 
         }
-
     } // onActivityResult
 
     public static Bitmap rotateImage(Bitmap source, float degree){
@@ -306,6 +308,15 @@ public class PlantAddActivity extends AppCompatActivity {
                 , matrix, true);
     }
 
+    public String BitmapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte [] bytes = baos.toByteArray();
+        String temp = Base64.encodeToString(bytes, Base64.DEFAULT);
+        return temp;
+    }
+
+    /*
     public static String byteArrayToBinaryString(byte[] b) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < b.length; ++i) {
@@ -322,6 +333,7 @@ public class PlantAddActivity extends AppCompatActivity {
         }
         return sb.toString();
     }
+*/
 
 
 
