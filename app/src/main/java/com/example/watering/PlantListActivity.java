@@ -59,13 +59,13 @@ public class PlantListActivity extends AppCompatActivity {
 
         // 리스트뷰
         listView = (ListView)findViewById(R.id.listView_xml);
-        myPListAdapter = new MyPListAdapter(PlantListActivity.this, PArrayList);
+        myPListAdapter = new MyPListAdapter(PlantListActivity.this, android.R.layout.simple_list_item_1, PArrayList);
         listView.setAdapter(myPListAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Toast
-                Toast.makeText(getApplicationContext(), myPListAdapter.getItem(position).getPlantName(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), myPListAdapter.getItem(position).getPlantName(), Toast.LENGTH_LONG).show();
                 //Intent intent = new Intent(getApplicationContext(), plantInfo.class);
             }
         });

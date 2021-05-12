@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                         String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
                                         String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
                                         int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
+                                        //String plantPhotoInfo = "null";
                                         String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
                                         String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
                                         Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);

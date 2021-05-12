@@ -196,9 +196,15 @@ public class PlantAddActivity extends AppCompatActivity {
                 plantPhotoInfo = BitmapToString(bitmap);
 
                 // 식물 생성
+                plantPhotoInfo = "PlantPhoto";
                 Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 String plantNum = "plant" + String.valueOf(pListSize+1);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
+
+
+
+
+
 
                 Toast.makeText(getApplicationContext(), plantNum, Toast.LENGTH_LONG).show();
 
@@ -308,13 +314,18 @@ public class PlantAddActivity extends AppCompatActivity {
                 , matrix, true);
     }
 
+
+
     public String BitmapToString(Bitmap bitmap){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte [] bytes = baos.toByteArray();
+
         String temp = Base64.encodeToString(bytes, Base64.DEFAULT);
+        ////String temp = bytes.toString();
         return temp;
     }
+
 
     /*
     public static String byteArrayToBinaryString(byte[] b) {
