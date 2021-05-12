@@ -191,6 +191,7 @@ public class PlantAddActivity extends AppCompatActivity {
                 byte[] data = baos.toByteArray();
                 plantPhoto = byteArrayToBinaryString(data);
 */
+
                 BitmapDrawable drawable = (BitmapDrawable)plantImageView.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
                 plantPhotoInfo = BitmapToString(bitmap);
