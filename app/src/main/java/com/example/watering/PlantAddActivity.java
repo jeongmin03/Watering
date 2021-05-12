@@ -1,11 +1,19 @@
 package com.example.watering;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -28,8 +36,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 
@@ -43,9 +53,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class PlantAddActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -64,6 +77,11 @@ public class PlantAddActivity extends AppCompatActivity {
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
+
+    private AlarmManager alarmManager;
+    private GregorianCalendar gregorianCalendar;
+    private NotificationManager notificationManager;
+    NotificationCompat.Builder builder;
 
     private File createImageFile() throws IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -202,12 +220,15 @@ public class PlantAddActivity extends AppCompatActivity {
                 String plantNum = "plant" + String.valueOf(pListSize+1);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
+                // 시간 Setting
+                notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                gregorianCalendar = new GregorianCalendar();
+                setContentView(R.layout.activity_plant_add);
 
 
 
-
-
-                Toast.makeText(getApplicationContext(), plantNum, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
 
                // Intent intent = new Intent(getApplicationContext(), PlantListActivity.class);
                // startActivity(intent);
@@ -216,6 +237,30 @@ public class PlantAddActivity extends AppCompatActivity {
         }); // buttonSavePlant - onClickListener
 
     } //onCreate
+
+    // 알람 시간 Setting
+    private void setAlarm(){
+        Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
+
+        String fromTime = plantLastWater.substring(0,4) + "-" + plantLastWater.substring(5,6) + "-"
+                + plantLastWater.substring(7,8) + " 15:40:00";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try{
+            date = dateFormat.parse(fromTime);
+        } catch (ParseException e){
+
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
+    }
+
 
     // 권한 요청
     @Override
@@ -326,6 +371,7 @@ public class PlantAddActivity extends AppCompatActivity {
         ////String temp = bytes.toString();
         return temp;
     }
+
 
 
     /*
