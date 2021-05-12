@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class MyPListAdapter extends BaseAdapter {
 
     TextView plantName_textView;
     ImageView plantPhoto_imageView;
+    Switch plantWater_switch;
 
     public MyPListAdapter(){}
 
@@ -58,6 +61,17 @@ public class MyPListAdapter extends BaseAdapter {
         Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
         //plantPhoto_imageView.setImageBitmap(bitmap);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
+
+        plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                if(isChecked){
+                    // 해당 식물의 waterCheck true로 DB
+                }
+                else{
+
+                }
+            }
+        });
 
         /*LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.layoutitem, null, true);
