@@ -66,19 +66,19 @@ public class PlantAddActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private String Ids;
-    private long PlCount_long;
-    private int PlCount_int;
+    ArrayList<Plant> PArrayList = new ArrayList<Plant>();
+    private int pListSize;
+
     private String plantName;
     private int plantCycle;
     private String plantLastWater;
     private String plantPhotoInfo;
 
-    private int pListSize;
-
     ImageView plantImageView;
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
+
 
 
     @Override
@@ -187,8 +187,38 @@ public class PlantAddActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
 
-               // Intent intent = new Intent(getApplicationContext(), PlantListActivity.class);
-               // startActivity(intent);
+
+                // 새로운 Plant List -> PlantListActivity로 전송
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                            Intent intent = new Intent(getApplicationContext(), PlantListActivity.class);
+
+                            Long PCount_long = postSnapshot.child(Ids).getChildrenCount();
+                            int PCount_int = Long.valueOf(PCount_long).intValue() - 2;
+                            //로그인한 해당 Ids의 식물 이름 목록 가져오기 + ArrList에 저장
+                            for(int j = 0; j < PCount_int; j++){
+                                String pStr = "plant" + String.valueOf(j+1);
+                                String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
+                                String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
+                                int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
+                                //String plantPhotoInfo = "null";
+                                String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
+                                String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
+                                Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
+                                PArrayList.add(p);
+                            }
+                            //해당 Ids의 식물 리스트 plantListActivity로 전달
+                            intent.putExtra("arr", PArrayList);
+                            startActivity(intent);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w("PlantListActivity", "Failed", error.toException()); //log 로 실패 알림
+                    }
+                });
 
             } // buttonSavePlant - onClick
         }); // buttonSavePlant - onClickListener
@@ -197,22 +227,43 @@ public class PlantAddActivity extends AppCompatActivity {
 
     private  void setAlarmNotification(){
         Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DATE, plantCycle); // plantCycle(일) 더하기
+        ////Calendar calendar = Calendar.getInstance();
+        //calendar.setTime(date);
+        //calendar.add(Calendar.DATE, plantCycle); // plantCycle(일) 더하기
+        ////calendar.add(Calendar.MINUTE, 1);
+        ////long firstWaterTime = calendar.getTimeInMillis();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle("Watering");
-        builder.setContentText("물주기");
+        builder.setContentTitle("Watering Alarm");
+        builder.setContentText(plantName + " 물 주기");
         builder.setAutoCancel(true);
-        builder.setWhen(calendar.getTimeInMillis());
+        //builder.setWhen(calendar.getTimeInMillis());
 
         // 알림 표시
         NotificationManager notificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             notificationManager.createNotificationChannel(new NotificationChannel("default", "기본채널", NotificationManager.IMPORTANCE_DEFAULT));
         }
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        //Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
+        //PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
+
+        String time = "2021-05-14 00:50:00";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date datetime = null;
+        try{
+            datetime = sdf.parse(time);
+        }catch (ParseException e){
+
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(datetime);
+
+       // alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
 
         notificationManager.notify(1, builder.build());
     }
