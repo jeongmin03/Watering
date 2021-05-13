@@ -14,7 +14,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    public AlarmReceiver(){}
 
     NotificationManager notificationManager;
     NotificationCompat.Builder builder;
@@ -23,10 +22,12 @@ public class AlarmReceiver extends BroadcastReceiver {
     private static String CHANNEL_ID = "channel1";
     private static String CHANNEL_NAME = "Channel1";
 
+    public AlarmReceiver(){}
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+
         builder = null;
         notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){

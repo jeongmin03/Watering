@@ -11,6 +11,7 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -78,47 +80,6 @@ public class PlantAddActivity extends AppCompatActivity {
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
 
-    private AlarmManager alarmManager;
-    private GregorianCalendar gregorianCalendar;
-    private NotificationManager notificationManager;
-    NotificationCompat.Builder builder;
-
-    private File createImageFile() throws IOException{
-        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  //prefix
-                ".jpg",         // suffix
-                storageDir    // directory
-        );
-
-        // 파일 저장 : path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) { // 파일 생성시 에러 발생
-                //Log.w("PlantAddActivity", "사진 파일 생성 에러!", ex);
-            }
-
-            // 파일 성공적 생성시 계속 실행
-            if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(this,
-                        "com.example.watering.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-    ///// 카메라 촬영 /////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +148,7 @@ public class PlantAddActivity extends AppCompatActivity {
         // 저장 버튼 : 식물 생성 - firebase 저장
         Button buttonSavePlant = (Button)findViewById(R.id.PA_SavePlant);
         buttonSavePlant.setOnClickListener(new View.OnClickListener(){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v){
 
@@ -203,12 +165,12 @@ public class PlantAddActivity extends AppCompatActivity {
 
                 // 식물 사진 정보
                 //plantImageView.setImageURI(photoURI);
-                /*Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
+      /*          Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] data = baos.toByteArray();
                 plantPhoto = byteArrayToBinaryString(data);
-*/
+     */
 
                 BitmapDrawable drawable = (BitmapDrawable)plantImageView.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
@@ -221,12 +183,7 @@ public class PlantAddActivity extends AppCompatActivity {
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
                 // 시간 Setting
-                notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-                alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                gregorianCalendar = new GregorianCalendar();
-                setContentView(R.layout.activity_plant_add);
-
-
+                setAlarmNotification();
 
                 Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
 
@@ -238,29 +195,66 @@ public class PlantAddActivity extends AppCompatActivity {
 
     } //onCreate
 
-    // 알람 시간 Setting
-    private void setAlarm(){
-        Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
-
-        String fromTime = plantLastWater.substring(0,4) + "-" + plantLastWater.substring(5,6) + "-"
-                + plantLastWater.substring(7,8) + " 15:40:00";
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try{
-            date = dateFormat.parse(fromTime);
-        } catch (ParseException e){
-
-        }
-
+    private  void setAlarmNotification(){
+        Date date = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        calendar.add(Calendar.DATE, plantCycle); // plantCycle(일) 더하기
 
-        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("Watering");
+        builder.setContentText("물주기");
+        builder.setAutoCancel(true);
+        builder.setWhen(calendar.getTimeInMillis());
 
+        // 알림 표시
+        NotificationManager notificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            notificationManager.createNotificationChannel(new NotificationChannel("default", "기본채널", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+
+        notificationManager.notify(1, builder.build());
     }
 
+
+    ///// 카메라 촬영 /////
+    private File createImageFile() throws IOException{
+        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  //prefix
+                ".jpg",         // suffix
+                storageDir    // directory
+        );
+
+        // 파일 저장 : path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) { // 파일 생성시 에러 발생
+                //Log.w("PlantAddActivity", "사진 파일 생성 에러!", ex);
+            }
+
+            // 파일 성공적 생성시 계속 실행
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this,
+                        "com.example.watering.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+    ///// 카메라 촬영 /////
 
     // 권한 요청
     @Override

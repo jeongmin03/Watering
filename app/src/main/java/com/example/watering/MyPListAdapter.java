@@ -62,6 +62,7 @@ public class MyPListAdapter extends BaseAdapter {
         //plantPhoto_imageView.setImageBitmap(bitmap);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
+        /* 이거 에러남!!
         plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
                 if(isChecked){
@@ -72,6 +73,8 @@ public class MyPListAdapter extends BaseAdapter {
                 }
             }
         });
+*/
+
 
         /*LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.layoutitem, null, true);
