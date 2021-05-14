@@ -182,7 +182,7 @@ public class PlantAddActivity extends AppCompatActivity {
                 String plantNum = "plant" + String.valueOf(pListSize+1);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
-                // 시간 Setting
+                // 알림 Setting
                 setAlarmNotification();
 
                 Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
@@ -225,47 +225,18 @@ public class PlantAddActivity extends AppCompatActivity {
 
     } //onCreate
 
+    // 알림 설정
     private  void setAlarmNotification(){
-        Date date = new Date();
-        ////Calendar calendar = Calendar.getInstance();
-        //calendar.setTime(date);
-        //calendar.add(Calendar.DATE, plantCycle); // plantCycle(일) 더하기
-        ////calendar.add(Calendar.MINUTE, 1);
-        ////long firstWaterTime = calendar.getTimeInMillis();
+        Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle("Watering Alarm");
-        builder.setContentText(plantName + " 물 주기");
-        builder.setAutoCancel(true);
-        //builder.setWhen(calendar.getTimeInMillis());
-
-        // 알림 표시
-        NotificationManager notificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            notificationManager.createNotificationChannel(new NotificationChannel("default", "기본채널", NotificationManager.IMPORTANCE_DEFAULT));
-        }
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        //Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
-        //PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
-
-        String time = "2021-05-14 00:50:00";
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date datetime = null;
-        try{
-            datetime = sdf.parse(time);
-        }catch (ParseException e){
-
-        }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(datetime);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 07);
 
-       // alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-
-        notificationManager.notify(1, builder.build());
     }
 
 
