@@ -4,18 +4,31 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class MyPListAdapter extends BaseAdapter {
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+
     private Context context;
     private ArrayList<Plant> Ad_arrP = new ArrayList<Plant>();
     //private LayoutInflater layoutInflater;
@@ -56,24 +69,56 @@ public class MyPListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layoutitem, parent,false);
         }
         //plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
-        plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
+
 
         Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
         //plantPhoto_imageView.setImageBitmap(bitmap);
+
+
+        plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
-        /* 이거 에러남!!
-        plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+        plantWater_switch = (Switch)convertView.findViewById(R.id.itemSwitch);
+        plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    // 해당 식물의 waterCheck true로 DB
-                }
-                else{
 
                 }
+
             }
         });
-*/
+  /*      plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+
+                // Firebase DB - 해당 식물의 plantChecked Update
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                            //IdCount_long = postSnapshot.getChildrenCount();
+                            String plantNum = Ad_arrP.get(position).getPlantName();
+                            if(isChecked){
+                                Ad_arrP.get(position).setPlantWaterCheck("true");
+                                databaseReference.child(plantNum).child("plantChecked").setValue("true");
+                            }
+                            else{
+                                Ad_arrP.get(position).setPlantWaterCheck("false");
+                                databaseReference.child(plantNum).child("plantChecked").setValue("false");
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w("MainActivity", "Failed Login", error.toException()); //log 로 실패 알림
+                    }
+                });
+
+            }
+        });*/
+
+
 
 
         /*LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

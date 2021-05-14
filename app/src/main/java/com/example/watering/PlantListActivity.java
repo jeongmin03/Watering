@@ -38,36 +38,6 @@ public class PlantListActivity extends AppCompatActivity {
         Ids = getIntent().getStringExtra("Ids");
         PArrayList = (ArrayList<Plant>)getIntent().getSerializableExtra("arr");
 
-/*
-        // Plant List Reset
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                        Long PCount_long = postSnapshot.child(Ids).getChildrenCount();
-                        int PCount_int = Long.valueOf(PCount_long).intValue() - 2;
-                        //로그인한 해당 Ids의 식물 이름 목록 가져오기 + ArrList에 저장
-                        for(int j = 0; j < PCount_int; j++){
-                            String pStr = "plant" + String.valueOf(j+1);
-                            String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
-                            String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
-                            int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
-                            //String plantPhotoInfo = "null";
-                            String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
-                            String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
-                            Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
-                            PArrayList.add(p);
-                        }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("PlantListActivity", "Failed", error.toException()); //log 로 실패 알림
-            }
-        });
-
-*/
-
         //로그아웃 버튼
         Button buttonLogOut = (Button) findViewById(R.id.PL_logOut);
         buttonLogOut.setOnClickListener(new View.OnClickListener(){
@@ -77,7 +47,6 @@ public class PlantListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         // 식물 추가 버튼
         Button buttonAddPlant = (Button)findViewById(R.id.PL_photo);
@@ -93,9 +62,7 @@ public class PlantListActivity extends AppCompatActivity {
 
         // 리스트뷰
         listView = (ListView)findViewById(R.id.listView_xml);
-        
         myPListAdapter = new MyPListAdapter(PlantListActivity.this, android.R.layout.simple_list_item_1, PArrayList);
-
         listView.setAdapter(myPListAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -105,7 +72,6 @@ public class PlantListActivity extends AppCompatActivity {
                 //Intent intent = new Intent(getApplicationContext(), plantInfo.class);
             }
         });
-
 
 
         /*       // 해당 아이디의 존재하는 식물 카운트

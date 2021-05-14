@@ -90,15 +90,13 @@ public class MainActivity extends AppCompatActivity {
                                     //로그인한 해당 Ids의 식물 이름 목록 가져오기 + ArrList에 저장
                                     for(int j = 0; j < PCount_int; j++){
                                         String pStr = "plant" + String.valueOf(j+1);
-                                        //String plN = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
-                                        //Plant p = new Plant(R.mipmap.ic_launcher, plN);
                                         String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
                                         String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
                                         int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
                                         //String plantPhotoInfo = "null";
                                         String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
                                         String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
-                                        Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
+                                        Plant p = new Plant(pStr, plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
                                         PArrayList.add(p);
                                     }
                                     //해당 Ids의 식물 리스트와 Ids 값 plantListActivity로 전달

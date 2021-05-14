@@ -9,6 +9,7 @@ public class Plant implements Serializable {
     //private int plantPhoto;
     //private String plantUrl;
 
+    private String plantNum;
     private String plantName;
     private int plantCycle;
     private String plantLastWater;
@@ -24,14 +25,16 @@ public class Plant implements Serializable {
         this.plantPhoto = plantPhoto;
         this.plantName = plantName;
     }*/
-    public Plant(String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo){
+    public Plant(String plantNum, String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo){
+        this.plantNum = plantNum;
         this.plantName = plantName;
         this.plantCycle = plantCycle;
         this.plantLastWater = plantLastWater;
         this.plantPhotoInfo = plantPhotoInfo;
         plantWaterCheck = "false";
     }
-    public Plant(String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo, String plantWaterCheck){
+    public Plant(String plantNum, String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo, String plantWaterCheck){
+        this.plantNum =plantNum;
         this.plantName = plantName;
         this.plantCycle = plantCycle;
         this.plantLastWater = plantLastWater;
@@ -39,6 +42,8 @@ public class Plant implements Serializable {
         this.plantWaterCheck = plantWaterCheck;
     }
 
+    public String getPlantNum() { return plantNum; }
+    public void setPlantNum(String plantNum) { this.plantNum = plantNum; }
     public String getPlantName() { return plantName; }
     public void setPlantName(String plantName) { this.plantName = plantName; }
     public int getPlantCycle() { return plantCycle; }

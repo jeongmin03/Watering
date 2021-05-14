@@ -69,6 +69,7 @@ public class PlantAddActivity extends AppCompatActivity {
     ArrayList<Plant> PArrayList = new ArrayList<Plant>();
     private int pListSize;
 
+    private String plantNum;
     private String plantName;
     private int plantCycle;
     private String plantLastWater;
@@ -178,8 +179,8 @@ public class PlantAddActivity extends AppCompatActivity {
 
                 // 식물 생성
                 plantPhotoInfo = "PlantPhoto";
-                Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo);
-                String plantNum = "plant" + String.valueOf(pListSize+1);
+                plantNum = "plant" + String.valueOf(pListSize+1);
+                Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
                 // 알림 Setting
@@ -206,7 +207,7 @@ public class PlantAddActivity extends AppCompatActivity {
                                 //String plantPhotoInfo = "null";
                                 String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
                                 String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
-                                Plant p = new Plant(plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
+                                Plant p = new Plant(pStr, plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
                                 PArrayList.add(p);
                             }
                             //해당 Ids의 식물 리스트 plantListActivity로 전달
@@ -231,8 +232,9 @@ public class PlantAddActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 07);
+        //calendar.set(Calendar.HOUR_OF_DAY, 12);
+        //calendar.set(Calendar.MINUTE, 07);
+        calendar.add(Calendar.MINUTE, +1);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
