@@ -165,23 +165,20 @@ public class PlantAddActivity extends AppCompatActivity {
                 plantLastWater = simpleDateFormat.format(today);
 
                 // 식물 사진 정보
-                //plantImageView.setImageURI(photoURI);
-      /*          Bitmap bitmap = ((BitmapDrawable)plantImageView.getDrawable()).getBitmap();
+                //   plantPhotoInfo = BitmapToString(bitmap);
+                Drawable drawable = plantImageView.getDrawable();
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
-                plantPhoto = byteArrayToBinaryString(data);
-     */
-
-                BitmapDrawable drawable = (BitmapDrawable)plantImageView.getDrawable();
-                Bitmap bitmap = drawable.getBitmap();
-                plantPhotoInfo = BitmapToString(bitmap);
+                byte[] bytes = baos.toByteArray();
+                plantPhotoInfo = bytes.toString();
 
                 // 식물 생성
-                plantPhotoInfo = "PlantPhoto";
+                //plantPhotoInfo = "PlantPhoto";
                 plantNum = "plant" + String.valueOf(pListSize+1);
                 Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
+
 
                 // 알림 Setting
                 setAlarmNotification();

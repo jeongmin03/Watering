@@ -18,6 +18,17 @@
         android:text="로그아웃"
         />
 
+        <Switch
+            android:id="@+id/waterSwitch"
+            android:layout_width="115dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:showText="true"
+            android:text="물"
+            android:textOff="NO"
+            android:textOn="YES" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,36 +26,35 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class MyPListAdapter extends BaseAdapter {
-   // private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-   // private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     private Context context;
-    private ArrayList<Plant> Ad_arrP = new ArrayList<Plant>();
-    //private LayoutInflater layoutInflater;
+    private ArrayList<Plant> Ad_arrP;
 
     TextView plantName_textView;
     ImageView plantPhoto_imageView;
     Switch plantWater_switch;
 
+    String switchTF = "00000000";
 
     public MyPListAdapter(){}
 
-    public MyPListAdapter(Context context, int resource, ArrayList<Plant> Ad_arrP){
+    public MyPListAdapter(Context context, int layout, ArrayList<Plant> Ad_arrP){
         this.context = context;
         this.Ad_arrP = Ad_arrP;
         ////layoutInflater = LayoutInflater.from(context);
     }
 
-
     @Override // 이 리스트뷰가 몇개의 아이템을 가지고 있는지
     public int getCount() {
-        return this.Ad_arrP.size();
+        return Ad_arrP.size();
     }
 
     @Override // 현재 어떤 아이템인지를 알려주는 부분,
     // arraylist에 저장되있는 객체중 position에 해당하는 것 가져옴
     public Plant getItem(int position) {
-        return this.Ad_arrP.get(position);
+        return Ad_arrP.get(position);
     }
 
     @Override // 현재 어떤 position인지 알려 줌
@@ -70,31 +69,42 @@ public class MyPListAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.layoutitem, parent,false);
         }
-        //plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
+        /*
+        Drawable drawable = plantImageView.getDrawable();
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] bytes = baos.toByteArray();
+                plantPhotoInfo = bytes.toString();
+         */
+        plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
+        String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
+        byte[] bytes = imageStr.getBytes();
+        Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        plantPhoto_imageView.setImageBitmap(bitmapImage);
 
 
-        Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
+
+        //Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
         //plantPhoto_imageView.setImageBitmap(bitmap);
-
-
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
-
 
         plantWater_switch = (Switch)convertView.findViewById(R.id.itemSwitch);
         plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String switchTF = "00000000";
+               // databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue(isChecked);
                 if(isChecked){
-                   //switchTF = switchTF.substring(0,position-1) + "1" + switchTF.substring(position+1, switchTF.length());
+
                 }
                 else{
-                   // switchTF = switchTF.substring(0,position-1) + "0" + switchTF.substring(position+1, switchTF.length());
-                }
 
+                }
             }
         });
+
+
   /*      plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
