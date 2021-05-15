@@ -230,6 +230,7 @@ public class PlantAddActivity extends AppCompatActivity {
     private  void setAlarmNotification(){
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
+        //receiverIntent.putExtra("plantName", plantName);
 
         Calendar calendar = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 12);

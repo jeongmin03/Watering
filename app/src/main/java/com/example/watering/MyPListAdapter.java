@@ -26,8 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class MyPListAdapter extends BaseAdapter {
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+   // private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+   // private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     private Context context;
     private ArrayList<Plant> Ad_arrP = new ArrayList<Plant>();
@@ -37,6 +37,7 @@ public class MyPListAdapter extends BaseAdapter {
     ImageView plantPhoto_imageView;
     Switch plantWater_switch;
 
+
     public MyPListAdapter(){}
 
     public MyPListAdapter(Context context, int resource, ArrayList<Plant> Ad_arrP){
@@ -44,6 +45,7 @@ public class MyPListAdapter extends BaseAdapter {
         this.Ad_arrP = Ad_arrP;
         ////layoutInflater = LayoutInflater.from(context);
     }
+
 
     @Override // 이 리스트뷰가 몇개의 아이템을 가지고 있는지
     public int getCount() {
@@ -78,12 +80,17 @@ public class MyPListAdapter extends BaseAdapter {
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
+
         plantWater_switch = (Switch)convertView.findViewById(R.id.itemSwitch);
         plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String switchTF = "00000000";
                 if(isChecked){
-
+                   //switchTF = switchTF.substring(0,position-1) + "1" + switchTF.substring(position+1, switchTF.length());
+                }
+                else{
+                   // switchTF = switchTF.substring(0,position-1) + "0" + switchTF.substring(position+1, switchTF.length());
                 }
 
             }

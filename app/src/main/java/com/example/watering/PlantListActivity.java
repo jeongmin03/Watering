@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -72,6 +74,7 @@ public class PlantListActivity extends AppCompatActivity {
                 //Intent intent = new Intent(getApplicationContext(), plantInfo.class);
             }
         });
+
 
 
         /*       // 해당 아이디의 존재하는 식물 카운트

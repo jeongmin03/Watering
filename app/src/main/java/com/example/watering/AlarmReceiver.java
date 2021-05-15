@@ -1,5 +1,6 @@
 package com.example.watering;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -30,7 +32,12 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-
+       /* Bundle bundle =((Activity)context).getIntent().getExtras();
+        if(bundle != null){
+            final String plantNStr = bundle.getString("plantName");
+            plantName = plantNStr;
+        }
+*/
         builder = null;
         notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -43,6 +50,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             builder = new NotificationCompat.Builder(context);
         }
 
+
         builder.setContentTitle("Watering Alarm");
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setContentText(plantName + " 물 주기");
@@ -51,7 +59,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Notification notification = builder.build();
         notificationManager.notify(1, notification);
 
-        //builder.setWhen(calendar.getTimeInMillis());
+
 
        /* // 알림창 눌렀을 때 나오는 Activity 화면
         Intent intentActivity = new Intent(context, MainActivity.class);
