@@ -39,30 +39,24 @@ public class MyPListAdapter extends BaseAdapter {
 
     TextView plantName_textView;
     ImageView plantPhoto_imageView;
-    Switch plantWater_switch;
     TextView plantLastWater_textView;
-
-    private String waterCheck;
 
     public MyPListAdapter(){}
 
     public MyPListAdapter(Context context, int layout, ArrayList<Plant> Ad_arrP){
         this.context = context;
         this.Ad_arrP = Ad_arrP;
-        ////layoutInflater = LayoutInflater.from(context);
     }
 
-    public interface OnItemChanged{
-        public void onItemChanged(ArrayList<Plant> arr);
+    ///// 물 주기 버튼 - DB에 LastWater 갱신
+    public interface OnItemChanged {
+        public void onItemChanged(ArrayList<Plant> arr, int position);
     }
     private OnItemChanged onItemChanged;
     public void setOnItemChanged(OnItemChanged onItemChanged){
         this.onItemChanged= onItemChanged;
     }
-
-    public ArrayList<Plant> getPlantArray(){
-        return Ad_arrP;
-    }
+    /////
 
     @Override // 이 리스트뷰가 몇개의 아이템을 가지고 있는지
     public int getCount() {
@@ -101,10 +95,9 @@ public class MyPListAdapter extends BaseAdapter {
         Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         plantPhoto_imageView.setImageBitmap(bitmapImage);
 
-
-
         //Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
         //plantPhoto_imageView.setImageBitmap(bitmap);
+
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
@@ -118,88 +111,14 @@ public class MyPListAdapter extends BaseAdapter {
                 Ad_arrP.get(position).setPlantLastWater(simpleDateFormat.format(today));
                 plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
                 if(onItemChanged != null){
-                    onItemChanged.onItemChanged(Ad_arrP);
+                    onItemChanged.onItemChanged(Ad_arrP, position);
                 }
-               // Intent intent = new Intent(getApplicationContext(), SetPlantDB.class);
-                //intent.putExtra("arr", Ad_arrP);
-               // intent.putExtra("Ids", Ids);
-               // startActivity(intent);
             }
         });
 
         plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
         plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
 
-        /*
-        plantWater_switch = (Switch)convertView.findViewById(R.id.itemSwitch);
-        plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               // databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue(isChecked);
-                if(isChecked){
-
-                }
-                else{
-
-                }
-            }
-        });
-         */
-
-
-/*
-        // Firebase DB - 해당 식물의 plantChecked Update
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    //IdCount_long = postSnapshot.getChildrenCount();
-                    String plantNum = Ad_arrP.get(position).getPlantName();
-                    if(waterCheck.equals("true")){
-                        databaseReference.child(plantNum).child("plantChecked").setValue("true");
-                    }
-                    else{
-                        databaseReference.child(plantNum).child("plantChecked").setValue("false");
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("PlantListActivity", "Failed", error.toException()); //log 로 실패 알림
-            }
-        });
-
-*/
-
-
-
-
-        /*LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.layoutitem, null, true);
-
-        plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
-        //plantName_textView.setText(Ad_arrP.get(position).toString());
-        plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
-        Context context = plantPhoto_imageView.getContext();
-        int id = context.getResources().getIdentifier("icon" + position, "drawable",
-                context.getPackageName());
-        plantPhoto_imageView.setImageResource(id);
-*/
-
-/*
-        if(convertView == null){ // convertView에 item.xml 뷰를 불러옴
-            // Activity가 아니기 때문에 convertView.findViewById(R.id.xxx)앞에 inflate받은 뷰
-            convertView = LayoutInflater.from(context).inflate(R.layout.layoutitem,null);
-            plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
-            plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
-        }
-
-        String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
-        Bitmap bitmap = StringToBitmap(imageStr);
-        plantPhoto_imageView.setImageBitmap(bitmap);
-
-       ///// plantName_textView.setText(Ad_arrP.get(position).getPlantName());
-*/
         return convertView;
     }
 

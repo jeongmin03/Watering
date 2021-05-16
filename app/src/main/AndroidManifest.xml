@@ -20,7 +20,6 @@
         android:theme="@style/Theme.Watering">
 
         <activity android:name=".PlantAddActivity" />
-        <activity android:name=".PlantInfoActivity" />
         <activity android:name=".PlantListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

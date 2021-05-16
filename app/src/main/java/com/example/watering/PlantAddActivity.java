@@ -179,10 +179,8 @@ public class PlantAddActivity extends AppCompatActivity {
                 Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
-
                 // 알림 Setting
-                setAlarmNotification();
-
+                setAlarmNotification(plantName);
                 Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
 
 
@@ -224,19 +222,20 @@ public class PlantAddActivity extends AppCompatActivity {
     } //onCreate
 
     // 알림 설정
-    private  void setAlarmNotification(){
+    private  void setAlarmNotification(String plantName){
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
-        //receiverIntent.putExtra("plantName", plantName);
+
 
         Calendar calendar = Calendar.getInstance();
-        //calendar.set(Calendar.HOUR_OF_DAY, 12);
-        //calendar.set(Calendar.MINUTE, 07);
+        //calendar.set(Calendar.HOUR_OF_DAY, 12); //calendar.set(Calendar.MINUTE, 07);
         calendar.add(Calendar.MINUTE, +1);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
+        receiverIntent.putExtra("PlantName", plantName);
+        sendBroadcast(receiverIntent);
     }
 
 

@@ -32,12 +32,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-       /* Bundle bundle =((Activity)context).getIntent().getExtras();
-        if(bundle != null){
-            final String plantNStr = bundle.getString("plantName");
-            plantName = plantNStr;
-        }
-*/
+        String plantName = intent.getStringExtra("PlantName");
+
         builder = null;
         notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -49,7 +45,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         else {
             builder = new NotificationCompat.Builder(context);
         }
-
 
         builder.setContentTitle("Watering Alarm");
         builder.setSmallIcon(R.mipmap.ic_launcher);
