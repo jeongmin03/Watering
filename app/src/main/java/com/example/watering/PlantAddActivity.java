@@ -224,8 +224,8 @@ public class PlantAddActivity extends AppCompatActivity {
     // 알림 설정
     private  void setAlarmNotification(String plantName){
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
+        receiverIntent.putExtra("PlantName", plantName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
-
 
         Calendar calendar = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 12); //calendar.set(Calendar.MINUTE, 07);
@@ -234,8 +234,10 @@ public class PlantAddActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-        receiverIntent.putExtra("PlantName", plantName);
-        sendBroadcast(receiverIntent);
+         /* Activity에서 Adapter로 전달
+            receiverIntent.putExtra("PlantName", plantName);
+            sendBroadcast(receiverIntent);
+        */
     }
 
 

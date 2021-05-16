@@ -89,8 +89,11 @@ public class PlantListActivity extends AppCompatActivity {
 
     // 알림 설정
     private  void setAlarmNotification(String plantName){
+
         Intent receiverIntent = new Intent(PlantListActivity.this, AlarmReceiver.class);
+        receiverIntent.putExtra("PlantName", plantName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantListActivity.this, 0, receiverIntent, 0);
+
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, +1);
@@ -98,8 +101,11 @@ public class PlantListActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-        receiverIntent.putExtra("PlantName", plantName);
-        sendBroadcast(receiverIntent);
+
+        /* Activity에서 Adapter로 전달
+            receiverIntent.putExtra("PlantName", plantName);
+            sendBroadcast(receiverIntent);
+        */
     }
 
 } // main
