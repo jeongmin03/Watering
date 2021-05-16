@@ -20,12 +20,13 @@ public class PlantInfoActivity extends AppCompatActivity {
 
     private String Ids;
     private String plantNum;
+    private ArrayList<Plant> selectedPlant = new ArrayList<Plant>();
+    private String watered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plant_info);
-        ArrayList<Plant> selectedPlant = new ArrayList<Plant>();
 
         //로그아웃 버튼
         Button buttonLogOut = (Button)findViewById(R.id.P_LogOut);
@@ -37,24 +38,27 @@ public class PlantInfoActivity extends AppCompatActivity {
             }
         });
 
-        selectedPlant = (ArrayList<Plant>)getIntent().getSerializableExtra("selectedPlant");
+        // 이전 Activity(PList)로 부터 Ids 정보 가져오기
         Ids = getIntent().getStringExtra("Ids");
-        plantNum = selectedPlant.get(0).getPlantNum();
+        selectedPlant = (ArrayList<Plant>)getIntent().getSerializableExtra("arr");
 
+
+
+/*
         Switch plantWater_switch = (Switch)findViewById(R.id.waterSwitch);
         plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue();
                 if(isChecked){
-                    databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue("true");
+                    //databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue("true");
                 }
                 else{
-                    databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue("false");
+                    //databaseReference.child("Watering").child(Ids).child(plantNum).child("plantWaterCheck").setValue("false");
                 }
             }
         });
-
+*/
 
     }
 }

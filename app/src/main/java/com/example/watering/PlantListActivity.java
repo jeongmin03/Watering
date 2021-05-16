@@ -67,7 +67,17 @@ public class PlantListActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView_xml); //
         myPListAdapter = new MyPListAdapter(PlantListActivity.this, android.R.layout.simple_list_item_1,PArrayList);
         listView.setAdapter(myPListAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        myPListAdapter.setOnItemChanged(new MyPListAdapter.OnItemChanged() {
+            @Override
+            public void onItemChanged(ArrayList<Plant> arr) {
+                PArrayList = arr;
+                Toast.makeText(getApplicationContext(), PArrayList.get(0).getPlantLastWater(), Toast.LENGTH_LONG).show();
+                databaseReference.child("Watering").child(Ids).child("plant1").child("plantLastWater").setValue(PArrayList.get(0).getPlantLastWater());
+            }
+        });
+
+
+      /*  listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getApplicationContext(), myPListAdapter.getItem(position).getPlantName(), Toast.LENGTH_LONG).show();
@@ -76,8 +86,7 @@ public class PlantListActivity extends AppCompatActivity {
                intent.putExtra("Ids", Ids);
                startActivity(intent);
             }
-        });
-
+        }); */
 
 
         /*       // 해당 아이디의 존재하는 식물 카운트

@@ -1,14 +1,17 @@
 package com.example.watering;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -23,11 +26,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MyPListAdapter extends BaseAdapter {
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     private Context context;
     private ArrayList<Plant> Ad_arrP;
@@ -35,8 +40,9 @@ public class MyPListAdapter extends BaseAdapter {
     TextView plantName_textView;
     ImageView plantPhoto_imageView;
     Switch plantWater_switch;
+    TextView plantLastWater_textView;
 
-    String switchTF = "00000000";
+    private String waterCheck;
 
     public MyPListAdapter(){}
 
@@ -44,6 +50,18 @@ public class MyPListAdapter extends BaseAdapter {
         this.context = context;
         this.Ad_arrP = Ad_arrP;
         ////layoutInflater = LayoutInflater.from(context);
+    }
+
+    public interface OnItemChanged{
+        public void onItemChanged(ArrayList<Plant> arr);
+    }
+    private OnItemChanged onItemChanged;
+    public void setOnItemChanged(OnItemChanged onItemChanged){
+        this.onItemChanged= onItemChanged;
+    }
+
+    public ArrayList<Plant> getPlantArray(){
+        return Ad_arrP;
     }
 
     @Override // 이 리스트뷰가 몇개의 아이템을 가지고 있는지
@@ -90,6 +108,29 @@ public class MyPListAdapter extends BaseAdapter {
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
+        Button waterButton = (Button)convertView.findViewById(R.id.Waterbutton);
+        waterButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Ad_arrP.get(position).setPlantWaterCheck("true");
+                Date today = new Date();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+                Ad_arrP.get(position).setPlantLastWater(simpleDateFormat.format(today));
+                plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
+                if(onItemChanged != null){
+                    onItemChanged.onItemChanged(Ad_arrP);
+                }
+               // Intent intent = new Intent(getApplicationContext(), SetPlantDB.class);
+                //intent.putExtra("arr", Ad_arrP);
+               // intent.putExtra("Ids", Ids);
+               // startActivity(intent);
+            }
+        });
+
+        plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
+        plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
+
+        /*
         plantWater_switch = (Switch)convertView.findViewById(R.id.itemSwitch);
         plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -103,37 +144,32 @@ public class MyPListAdapter extends BaseAdapter {
                 }
             }
         });
+         */
 
 
-  /*      plantWater_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+/*
+        // Firebase DB - 해당 식물의 plantChecked Update
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-
-                // Firebase DB - 해당 식물의 plantChecked Update
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                            //IdCount_long = postSnapshot.getChildrenCount();
-                            String plantNum = Ad_arrP.get(position).getPlantName();
-                            if(isChecked){
-                                Ad_arrP.get(position).setPlantWaterCheck("true");
-                                databaseReference.child(plantNum).child("plantChecked").setValue("true");
-                            }
-                            else{
-                                Ad_arrP.get(position).setPlantWaterCheck("false");
-                                databaseReference.child(plantNum).child("plantChecked").setValue("false");
-                            }
-                        }
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                    //IdCount_long = postSnapshot.getChildrenCount();
+                    String plantNum = Ad_arrP.get(position).getPlantName();
+                    if(waterCheck.equals("true")){
+                        databaseReference.child(plantNum).child("plantChecked").setValue("true");
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.w("MainActivity", "Failed Login", error.toException()); //log 로 실패 알림
+                    else{
+                        databaseReference.child(plantNum).child("plantChecked").setValue("false");
                     }
-                });
-
+                }
             }
-        });*/
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("PlantListActivity", "Failed", error.toException()); //log 로 실패 알림
+            }
+        });
+
+*/
 
 
 

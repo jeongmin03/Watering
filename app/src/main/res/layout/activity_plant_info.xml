@@ -18,6 +18,9 @@
         android:text="로그아웃"
         />
 
+
+
+<!--
         <Switch
             android:id="@+id/waterSwitch"
             android:layout_width="115dp"
@@ -29,6 +32,6 @@
             android:text="물"
             android:textOff="NO"
             android:textOn="YES" />
-
+-->
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

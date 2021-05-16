@@ -13,8 +13,7 @@
         android:layout_marginLeft="5dp"
         android:layout_width="50dp"
         android:layout_height="60dp"
-        android:src="@mipmap/ic_launcher"
-        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher_foreground"
         />
 
     <TextView
@@ -26,19 +25,40 @@
         android:gravity="center"
         android:textSize="20dp" />
 
-
-    <Switch
-        android:id="@+id/itemSwitch"
-        android:layout_width="115dp"
-        android:layout_height="80dp"
+    <LinearLayout
+        android:layout_width="216dp"
+        android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:showText="true"
-        android:text="물"
-        android:textOff="NO"
-        android:textOn="YES" />
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
+        <Button
+            android:id="@+id/Waterbutton"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="Water" />
+
+        <TextView
+            android:id="@+id/LastWaterTextView"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:textSize="15dp" />
+        <!--
+        <Switch
+            android:id="@+id/itemSwitch"
+            android:layout_width="115dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:showText="true"
+            android:text="물"
+            android:textOff="NO"
+            android:textOn="YES" />
+    -->
+    </LinearLayout>
 </LinearLayout>
 
 <!--
