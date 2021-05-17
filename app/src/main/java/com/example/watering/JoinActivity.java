@@ -34,13 +34,12 @@ public class JoinActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
-
+/*
         // 존재하는 아이디 개수 카운트
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                        //fdCount = postSnapshot.child("Watering").getChildrenCount();
                         idCount_long = postSnapshot.getChildrenCount();
                     }
                 }
@@ -49,7 +48,7 @@ public class JoinActivity extends AppCompatActivity  {
                     Log.w("JoinActivity", "Failed Join", error.toException()); //log 로 실패 알림
                 }
             });
-
+*/
         //아이디 중복확인 : DB와 비교
         Button buttonDup = (Button) findViewById(R.id.J_dupButton);
         buttonDup.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +62,7 @@ public class JoinActivity extends AppCompatActivity  {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int exist = 0;
                         for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                            idCount_long = postSnapshot.getChildrenCount();
                             idCount_int = (Long.valueOf(idCount_long).intValue());
                             for(int i = 0; i < idCount_int; i++){
                                 Ids = "Id" + String.valueOf(i+1);

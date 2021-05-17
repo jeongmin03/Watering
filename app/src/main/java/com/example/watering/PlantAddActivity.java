@@ -45,8 +45,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -88,6 +91,7 @@ public class PlantAddActivity extends AppCompatActivity {
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
+    Uri downloadURI;
 
 
     @Override
@@ -189,12 +193,29 @@ public class PlantAddActivity extends AppCompatActivity {
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "식물사진 업로드 실패.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "식물 사진 Cloud 업로드 실패.", Toast.LENGTH_LONG).show();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getApplicationContext(), "식물사진 업로드 성공.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "식물 사진 Cloud 업로드 성공.", Toast.LENGTH_LONG).show();
+                    }
+                });
+                //////
+                Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if(!task.isSuccessful()){
+                            throw task.getException();
+                        }
+                        return plantImageRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(task.isSuccessful()){
+                            downloadURI = task.getResult();
+                        }
                     }
                 });
 

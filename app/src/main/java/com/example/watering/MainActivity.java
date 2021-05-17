@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+/*
         // 존재하는 아이디 개수 카운트
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("MainActivity", "Failed Login", error.toException()); //log 로 실패 알림
             }
         });
-
+*/
         //회원가입 버튼
         Button buttonJ = (Button) findViewById(R.id.M_joinButton);
         buttonJ.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                            IdCount_long = postSnapshot.getChildrenCount();
                             IdCount_int = (Long.valueOf(IdCount_long).intValue());
                             for(int i = 0; i < IdCount_int; i++){
                                 Ids = "Id" + String.valueOf(i+1);
