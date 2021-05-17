@@ -173,18 +173,13 @@ public class PlantAddActivity extends AppCompatActivity {
                 plantLastWater = simpleDateFormat.format(today);
 
 
-
-
-
                 // 식물 사진 정보
                 Drawable drawable = plantImageView.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
-            /*
-                plantPhotoInfo = byteArrayToBinaryString(bytes);
-           */
+
                 plantPhotoInfo = bytes.toString();
 
                 // Cloud Storage에 이미지 Upload
@@ -267,24 +262,6 @@ public class PlantAddActivity extends AppCompatActivity {
     } //onCreate
 
 
-
-    public String byteArrayToBinaryString(byte[] b){
-        StringBuilder sb=new StringBuilder();
-        for(int i=0; i<b.length; ++i){
-            sb.append(byteToBinaryString(b[i]));
-        }
-        return sb.toString();
-    }
-
-    public String byteToBinaryString(byte n) {
-        StringBuilder sb = new StringBuilder("00000000");
-        for (int bit = 0; bit < 8; bit++) {
-            if (((n >> bit) & 1) > 0) {
-                sb.setCharAt(7 - bit, '1');
-            }
-        }
-        return sb.toString();
-    }
 
     // 알림 설정
     private  void setAlarmNotification(String plantName){

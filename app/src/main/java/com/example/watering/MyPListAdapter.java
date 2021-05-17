@@ -96,20 +96,16 @@ public class MyPListAdapter extends BaseAdapter {
         plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
 
-    /*
-        byte[] bytes = binaryStringToByteArray(imageStr);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        Drawable drawable = Drawable.createFromStream(inputStream, "");
-        plantPhoto_imageView.setImageDrawable(drawable);
-   */
+
+
         byte[] bytes = imageStr.getBytes();
         Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         plantPhoto_imageView.setImageBitmap(bitmapImage);
 
        /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmapImage, plantPhoto_imageView.getWidth(),
                 plantPhoto_imageView.getHeight(), true);
-        plantPhoto_imageView.setImageBitmap(resizedBitmap);
-*/
+          plantPhoto_imageView.setImageBitmap(resizedBitmap);
+       */
 
 
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
@@ -136,34 +132,4 @@ public class MyPListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public byte[] binaryStringToByteArray(String s){
-        int count=s.length()/8;
-        byte[] b=new byte[count];
-        for(int i=1; i<count; ++i){
-            String t=s.substring((i-1)*8, i*8);
-            b[i-1]=binaryStringToByte(t);
-        }
-        return b;
-    }
-
-    public byte binaryStringToByte(String s){
-        byte ret=0, total=0;
-        for(int i=0; i<8; ++i){
-            ret = (s.charAt(7-i)=='1') ? (byte)(1 << i) : 0;
-            total = (byte) (ret|total);
-        }
-        return total;
-    }
-
-
-    public static Bitmap StringToBitmap(String imgStr){
-        try{
-            ////byte[] encodeByte = imgStr.getBytes();
-            byte[] encodeByte = Base64.decode(imgStr, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        }catch (Exception e){
-            return null;
-        }
-    }
 }
