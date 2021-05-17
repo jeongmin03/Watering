@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.opengl.GLES30;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -28,6 +32,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,22 +91,26 @@ public class MyPListAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.layoutitem, parent,false);
         }
-        /*
-        Drawable drawable = plantImageView.getDrawable();
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] bytes = baos.toByteArray();
-                plantPhotoInfo = bytes.toString();
-         */
+
+
         plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
+
+    /*
+        byte[] bytes = binaryStringToByteArray(imageStr);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        Drawable drawable = Drawable.createFromStream(inputStream, "");
+        plantPhoto_imageView.setImageDrawable(drawable);
+   */
         byte[] bytes = imageStr.getBytes();
         Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         plantPhoto_imageView.setImageBitmap(bitmapImage);
 
-        //Bitmap bitmap = StringToBitmap(Ad_arrP.get(position).getPlantPhotoInfo());
-        //plantPhoto_imageView.setImageBitmap(bitmap);
+       /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmapImage, plantPhoto_imageView.getWidth(),
+                plantPhoto_imageView.getHeight(), true);
+        plantPhoto_imageView.setImageBitmap(resizedBitmap);
+*/
+
 
         plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
@@ -121,6 +135,26 @@ public class MyPListAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+    public byte[] binaryStringToByteArray(String s){
+        int count=s.length()/8;
+        byte[] b=new byte[count];
+        for(int i=1; i<count; ++i){
+            String t=s.substring((i-1)*8, i*8);
+            b[i-1]=binaryStringToByte(t);
+        }
+        return b;
+    }
+
+    public byte binaryStringToByte(String s){
+        byte ret=0, total=0;
+        for(int i=0; i<8; ++i){
+            ret = (s.charAt(7-i)=='1') ? (byte)(1 << i) : 0;
+            total = (byte) (ret|total);
+        }
+        return total;
+    }
+
 
     public static Bitmap StringToBitmap(String imgStr){
         try{

@@ -98,6 +98,7 @@ public class JoinActivity extends AppCompatActivity  {
                 String JoinPwd = p.getText().toString();
                 EditText p2 = (EditText) findViewById(R.id.J_textPwd2);
                 String JoinPwd2 = p2.getText().toString();
+
                 if(!JoinPwd.equals(JoinPwd2)){
                     Toast.makeText(getApplicationContext(), "비밀번호를 다시 입력해주세요.", Toast.LENGTH_LONG).show();
                 }
@@ -106,8 +107,10 @@ public class JoinActivity extends AppCompatActivity  {
                 }
                 else {
                     User u = new User(JoinId, JoinPwd);
-                    Ids = Ids.substring(0, 2) + String.valueOf(idCount_int);
+                    //Ids = Ids.substring(0, 2) + String.valueOf(idCount_int);
+                    Ids = "Id" + String.valueOf(idCount_int + 1);
                     databaseReference.child("Watering").child(Ids).setValue(u);
+                    Toast.makeText(getApplicationContext(), "가입되었습니다.", Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);

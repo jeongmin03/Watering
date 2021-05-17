@@ -45,16 +45,22 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +71,9 @@ import java.util.GregorianCalendar;
 public class PlantAddActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    private StorageReference storageReference = firebaseStorage.getReference();
+
     private String Ids;
     ArrayList<Plant> PArrayList = new ArrayList<Plant>();
     private int pListSize;
@@ -79,7 +88,6 @@ public class PlantAddActivity extends AppCompatActivity {
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
-
 
 
     @Override
@@ -122,12 +130,9 @@ public class PlantAddActivity extends AppCompatActivity {
             public void onClick(View v){
                 switch (v.getId()){
                     case R.id.PA_Camera:
-                        //Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        //startActivityForResult(cameraIntent, TAKE_PICTURE);
                         dispatchTakePictureIntent();
                         break;
                 }
-                //dispatchTakePictureIntent();
             }
         });
 
@@ -144,14 +149,13 @@ public class PlantAddActivity extends AppCompatActivity {
         // 촬영한 사진 이미지뷰
         plantImageView = (ImageView)findViewById(R.id.PA_IMAGE);
 
-
-
         // 저장 버튼 : 식물 생성 - firebase 저장
         Button buttonSavePlant = (Button)findViewById(R.id.PA_SavePlant);
         buttonSavePlant.setOnClickListener(new View.OnClickListener(){
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v){
+                plantNum = "plant" + String.valueOf(pListSize+1);
 
                 // 식물 이름 정보, 물주는 주기 정보
                 EditText PL = (EditText) findViewById(R.id.PA_plantName);
@@ -164,18 +168,38 @@ public class PlantAddActivity extends AppCompatActivity {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 plantLastWater = simpleDateFormat.format(today);
 
+
+
+
+
                 // 식물 사진 정보
-                //   plantPhotoInfo = BitmapToString(bitmap);
                 Drawable drawable = plantImageView.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
+            /*
+                plantPhotoInfo = byteArrayToBinaryString(bytes);
+           */
                 plantPhotoInfo = bytes.toString();
 
+                // Cloud Storage에 이미지 Upload
+                StorageReference plantImageRef = storageReference.child(Ids + "/" + plantNum  + "_" + plantName);
+                UploadTask uploadTask = plantImageRef.putBytes(bytes);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "식물사진 업로드 실패.", Toast.LENGTH_LONG).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getApplicationContext(), "식물사진 업로드 성공.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
                 // 식물 생성
-                //plantPhotoInfo = "PlantPhoto";
-                plantNum = "plant" + String.valueOf(pListSize+1);
                 Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
 
@@ -221,6 +245,26 @@ public class PlantAddActivity extends AppCompatActivity {
 
     } //onCreate
 
+
+
+    public String byteArrayToBinaryString(byte[] b){
+        StringBuilder sb=new StringBuilder();
+        for(int i=0; i<b.length; ++i){
+            sb.append(byteToBinaryString(b[i]));
+        }
+        return sb.toString();
+    }
+
+    public String byteToBinaryString(byte n) {
+        StringBuilder sb = new StringBuilder("00000000");
+        for (int bit = 0; bit < 8; bit++) {
+            if (((n >> bit) & 1) > 0) {
+                sb.setCharAt(7 - bit, '1');
+            }
+        }
+        return sb.toString();
+    }
+
     // 알림 설정
     private  void setAlarmNotification(String plantName){
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
@@ -251,7 +295,6 @@ public class PlantAddActivity extends AppCompatActivity {
                 ".jpg",         // suffix
                 storageDir    // directory
         );
-
         // 파일 저장 : path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
@@ -267,7 +310,6 @@ public class PlantAddActivity extends AppCompatActivity {
             } catch (IOException ex) { // 파일 생성시 에러 발생
                 //Log.w("PlantAddActivity", "사진 파일 생성 에러!", ex);
             }
-
             // 파일 성공적 생성시 계속 실행
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this,
@@ -289,7 +331,6 @@ public class PlantAddActivity extends AppCompatActivity {
             Log.d("PlantAddActivity", "Permission: " + permissions[0] + "was " + grantResults[0]);
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -377,38 +418,6 @@ public class PlantAddActivity extends AppCompatActivity {
                 , matrix, true);
     }
 
-
-
-    public String BitmapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte [] bytes = baos.toByteArray();
-
-        String temp = Base64.encodeToString(bytes, Base64.DEFAULT);
-        ////String temp = bytes.toString();
-        return temp;
-    }
-
-
-
-    /*
-    public static String byteArrayToBinaryString(byte[] b) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < b.length; ++i) {
-            sb.append(byteToBinaryString(b[i]));
-        }
-        return sb.toString();
-    }
-    public static String byteToBinaryString(byte n) {
-        StringBuilder sb = new StringBuilder("00000000");
-        for (int bit = 0; bit < 8; bit++) {
-            if (((n >> bit) & 1) > 0) {
-                sb.setCharAt(7 - bit, '1');
-            }
-        }
-        return sb.toString();
-    }
-*/
 
 
 

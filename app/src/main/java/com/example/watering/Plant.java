@@ -6,9 +6,6 @@ import java.io.Serializable;
 
 public class Plant implements Serializable {
 
-    //private int plantPhoto;
-    //private String plantUrl;
-
     private String plantNum;
     private String plantName;
     private int plantCycle;
@@ -17,14 +14,7 @@ public class Plant implements Serializable {
     private String plantWaterCheck;
 
     public Plant(){}
-    /*public Plant(String plantName){
-        this.plantName = plantName;
-        plantPhoto = 0;
-    }
-    public Plant(int plantPhoto, String plantName){
-        this.plantPhoto = plantPhoto;
-        this.plantName = plantName;
-    }*/
+
     public Plant(String plantNum, String plantName, int plantCycle, String plantLastWater, String plantPhotoInfo){
         this.plantNum = plantNum;
         this.plantName = plantName;
@@ -56,17 +46,5 @@ public class Plant implements Serializable {
     public void setPlantPhotoInfo(String plantPhotoInfo) { this.plantPhotoInfo = plantPhotoInfo; }
 
 
-    /*  public int getPlantPhoto() {
-         return 0;
-     }
-  /* public void setPlantPhoto(int plantPhoto) {
-          this.plantPhoto = plantPhoto;
-     /*
-      public String getPlantUrl() {
-          return plantUrl;
-      }
-      public void setPlantUrl(String plantUrl) {
-          this.plantUrl = plantUrl;
-      }
-  */
+
 }
