@@ -91,7 +91,6 @@ public class PlantAddActivity extends AppCompatActivity {
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
     Uri photoURI;
-    Uri downloadURI;
 
 
     @Override
@@ -172,15 +171,12 @@ public class PlantAddActivity extends AppCompatActivity {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 plantLastWater = simpleDateFormat.format(today);
 
-
                 // 식물 사진 정보
                 Drawable drawable = plantImageView.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
-
-                //plantPhotoInfo = bytes.toString();
 
                 // Cloud Storage에 이미지 Upload
                 plantPhotoInfo = Ids + "/" + plantNum  + "_" + plantName;
@@ -198,9 +194,6 @@ public class PlantAddActivity extends AppCompatActivity {
                     }
                 });
 
-
-               // plantPhotoInfo = downloadURI.toString();
-
                 // 식물 생성
                 Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
                 databaseReference.child("Watering").child(Ids).child(plantNum).setValue(p);
@@ -208,7 +201,6 @@ public class PlantAddActivity extends AppCompatActivity {
                 // 알림 Setting
                 setAlarmNotification(plantName, plantCycle);
                 Toast.makeText(getApplicationContext(), "식물을 추가했습니다.", Toast.LENGTH_LONG).show();
-
 
                 // 새로운 Plant List -> PlantListActivity로 전송
                 databaseReference.addValueEventListener(new ValueEventListener() {
@@ -247,8 +239,6 @@ public class PlantAddActivity extends AppCompatActivity {
 
     } //onCreate
 
-
-
     // 알림 설정
     private  void setAlarmNotification(String plantName, int plantCycle){
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
@@ -264,10 +254,8 @@ public class PlantAddActivity extends AppCompatActivity {
 
          /* Activity에서 Adapter로 전달
             receiverIntent.putExtra("PlantName", plantName);
-            sendBroadcast(receiverIntent);
-        */
+            sendBroadcast(receiverIntent); */
     }
-
 
     ///// 카메라 촬영 /////
     private File createImageFile() throws IOException{
@@ -402,11 +390,8 @@ public class PlantAddActivity extends AppCompatActivity {
                 , matrix, true);
     }
 
+} // PlantAddActivity - main
 
-
-
-
-} // PlantAddActivity
 /*
 // WebView
         WebView webView = (WebView) findViewById(R.id.PA_WebView);
@@ -455,23 +440,3 @@ public class PlantAddActivity extends AppCompatActivity {
             }
         });
 */
-  /*
-                // 해당 아이디의 존재하는 식물 목록 수 카운트
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        // 로그인 정보 받아오기 + 해당 아이디의 식물 목록 식물 개수 구하기
-                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                            //Intent intent = getIntent();
-                            //Ids = intent.getExtras().getString("Ids");
-                            PlCount_long = postSnapshot.child(Ids).getChildrenCount();
-                        }
-                        PlCount_int = Long.valueOf(PlCount_long).intValue() - 2;
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.w("PlantAddActivity", "Failed", error.toException()); //log 로 실패 알림
-                    }
-                }); // dataReference
-
-                 */

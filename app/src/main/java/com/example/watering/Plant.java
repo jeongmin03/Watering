@@ -45,6 +45,4 @@ public class Plant implements Serializable {
     public String getPlantPhotoInfo() { return plantPhotoInfo; }
     public void setPlantPhotoInfo(String plantPhotoInfo) { this.plantPhotoInfo = plantPhotoInfo; }
 
-
-
 }

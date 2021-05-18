@@ -55,7 +55,6 @@ public class MyPListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Plant> Ad_arrP;
 
-
     public MyPListAdapter(){}
 
     public MyPListAdapter(Context context, int layout, ArrayList<Plant> Ad_arrP){
@@ -63,7 +62,7 @@ public class MyPListAdapter extends BaseAdapter {
         this.Ad_arrP = Ad_arrP;
     }
 
-    ///// 물 주기 버튼 - DB에 LastWater 갱신
+    ///// 물 주기 버튼 - DB에 LastWater 정보 갱신
     public interface OnItemChanged {
         public void onItemChanged(ArrayList<Plant> arr, int position);
     }
@@ -98,6 +97,7 @@ public class MyPListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layoutitem, parent,false);
         }
 
+        // PlantPhoto - ImageView, Firebase Cloud Storage
         ImageView plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
 
@@ -110,13 +110,15 @@ public class MyPListAdapter extends BaseAdapter {
             }
         });
 
+        // PlantName - TextView
         TextView plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
-
+        // LastWater - TextView
         TextView plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
         plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
 
+        // Watering - Button
         Button waterButton = (Button)convertView.findViewById(R.id.Waterbutton);
         waterButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -132,12 +134,6 @@ public class MyPListAdapter extends BaseAdapter {
             }
         });
 
-
-
         return convertView;
     }
 }
-/*  byte[] bytes = imageStr.getBytes();
-            Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            plantPhoto_imageView.setImageBitmap(bitmapImage);
-        */

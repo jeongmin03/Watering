@@ -23,32 +23,18 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    public long IdCount_long;
-    public int IdCount_int;
-    public String Ids;
-    public long PCount_long;
-    public int PCount_int;
-    ArrayList<Plant> PArrayList = new ArrayList<Plant>();
+    private long IdCount_long;
+    private int IdCount_int;
+    private String Ids;
+    private long PCount_long;
+    private int PCount_int;
+    private ArrayList<Plant> PArrayList = new ArrayList<Plant>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-/*
-        // 존재하는 아이디 개수 카운트
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    IdCount_long = postSnapshot.getChildrenCount();
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("MainActivity", "Failed Login", error.toException()); //log 로 실패 알림
-            }
-        });
-*/
+
         //회원가입 버튼
         Button buttonJ = (Button) findViewById(R.id.M_joinButton);
         buttonJ.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }// onCreate
-} // main
+
+} // MainActivity(Login) - main
 
 

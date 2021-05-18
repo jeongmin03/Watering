@@ -26,29 +26,16 @@ import java.util.Calendar;
 public class JoinActivity extends AppCompatActivity  {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    public long idCount_long;
-    public int idCount_int;
-    public String Ids;
+    private long idCount_long;
+    private int idCount_int;
+    private String Ids;
+    private boolean isJoined = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
-/*
-        // 존재하는 아이디 개수 카운트
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                        idCount_long = postSnapshot.getChildrenCount();
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w("JoinActivity", "Failed Join", error.toException()); //log 로 실패 알림
-                }
-            });
-*/
+
         //아이디 중복확인 : DB와 비교
         Button buttonDup = (Button) findViewById(R.id.J_dupButton);
         buttonDup.setOnClickListener(new View.OnClickListener() {
@@ -60,21 +47,19 @@ public class JoinActivity extends AppCompatActivity  {
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int exist = 0;
+                        boolean isIdExist = false;
                         for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
                             idCount_long = postSnapshot.getChildrenCount();
                             idCount_int = (Long.valueOf(idCount_long).intValue());
                             for(int i = 0; i < idCount_int; i++){
                                 Ids = "Id" + String.valueOf(i+1);
                                 String st = postSnapshot.child(Ids).child("personId").getValue().toString();
-                                if(st.equals(JoinId)){
+                                if(st.equals(JoinId) && (!isJoined)){
                                     Toast.makeText(getApplicationContext(), "존재하는 아이디입니다.", Toast.LENGTH_LONG).show();
-                                    exist++;
-                                    //Intent intent = new Intent(getApplicationContext(), JoinActivity.class);
-                                    //startActivity(intent);
+                                    isIdExist = true;
                                 }
-                            } // for i
-                            if(exist == 0) {
+                            } // for문
+                            if((!isIdExist) && (!isJoined)) {
                                 Toast.makeText(getApplicationContext(), "사용가능한 아이디입니다.", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -83,9 +68,9 @@ public class JoinActivity extends AppCompatActivity  {
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.w("JoinActivity", "Failed Join", error.toException()); //log 로 실패 알림
                     }
-                });
+                }); // databaseReference.addValueEventListener
             }
-        });
+        }); // 아이디 중복 확인 버튼
 
         // 가입 버튼 : 아이디,비밀번호 DB 저장
         Button buttonJoin = (Button) findViewById(R.id.J_joinButton);
@@ -107,11 +92,11 @@ public class JoinActivity extends AppCompatActivity  {
                 }
                 else {
                     User u = new User(JoinId, JoinPwd);
-                    //Ids = Ids.substring(0, 2) + String.valueOf(idCount_int);
                     Ids = "Id" + String.valueOf(idCount_int + 1);
                     databaseReference.child("Watering").child(Ids).setValue(u);
-                    Toast.makeText(getApplicationContext(), "가입되었습니다.", Toast.LENGTH_LONG).show();
+                    isJoined = true;
 
+                    Toast.makeText(getApplicationContext(), "가입되었습니다.", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                 }
@@ -128,7 +113,5 @@ public class JoinActivity extends AppCompatActivity  {
             }
         });
 
-    }
-
-
-}
+    } // onCreate
+} // JoinActivity

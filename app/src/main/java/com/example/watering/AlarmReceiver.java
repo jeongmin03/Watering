@@ -20,13 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     NotificationManager notificationManager;
     NotificationCompat.Builder builder;
 
-    private String plantName;
-
     public AlarmReceiver(){}
-
-    public void setPlantName(String plantName){
-        this.plantName = plantName;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -54,13 +48,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         Notification notification = builder.build();
         notificationManager.notify(1, notification);
 
+    } // onReceive
 
-
-       /* // 알림창 눌렀을 때 나오는 Activity 화면
-        Intent intentActivity = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 101, intentActivity, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(pendingIntent);
-*/
-    }
-}
+} // AlarmReceiver

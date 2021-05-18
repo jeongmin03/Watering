@@ -33,7 +33,7 @@ public class PlantListActivity extends AppCompatActivity {
 
     ListView listView;
     MyPListAdapter myPListAdapter;
-    ArrayList<Plant> PArrayList = new ArrayList<Plant>();
+    private ArrayList<Plant> PArrayList = new ArrayList<Plant>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,6 @@ public class PlantListActivity extends AppCompatActivity {
             }
         });
 
-
-
         // 리스트뷰
         listView = findViewById(R.id.listView_xml); //
         myPListAdapter = new MyPListAdapter(PlantListActivity.this, android.R.layout.simple_list_item_1, PArrayList);
@@ -84,16 +82,13 @@ public class PlantListActivity extends AppCompatActivity {
             }
         });
 
-
     } //onCreate
 
     // 알림 설정
     private  void setAlarmNotification(String plantName, int plantCycle){
-
         Intent receiverIntent = new Intent(PlantListActivity.this, AlarmReceiver.class);
         receiverIntent.putExtra("PlantName", plantName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantListActivity.this, 0, receiverIntent, 0);
-
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, +plantCycle);
@@ -101,11 +96,10 @@ public class PlantListActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
-
         /* Activity에서 Adapter로 전달
             receiverIntent.putExtra("PlantName", plantName);
             sendBroadcast(receiverIntent);
         */
     }
 
-} // main
+} // PlantListActivity - main
