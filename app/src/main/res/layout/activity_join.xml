@@ -8,16 +8,17 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="100dp"
         android:gravity="center"
         android:textSize="30dp"
         android:text="회원 가입" />
 
     <EditText
         android:id="@+id/J_textId"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:ems="10"
         android:hint="아이디"
@@ -25,42 +26,52 @@
 
     <Button
         android:id="@+id/J_dupButton"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:background="@drawable/button_design"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:text="중복 확인" />
 
     <EditText
         android:id="@+id/J_textPwd"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
         android:ems="10"
         android:hint="비밀번호"
         android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/J_textPwd2"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
         android:ems="10"
         android:hint="비밀번호 확인"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/J_joinButton"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_design"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="가입"
         />
 
     <Button
         android:id="@+id/J_cancelButton"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_design"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="취소" />
 

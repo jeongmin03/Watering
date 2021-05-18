@@ -90,8 +90,10 @@ public class PlantAddActivity extends AppCompatActivity {
     ImageView plantImageView;
     String currentPhotoPath;
     final static int REQUEST_TAKE_PHOTO = 1;
+    final static int PICK_FROM_ALBUM = 2;
     Uri photoURI;
 
+    private String plantUrl = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,18 +103,6 @@ public class PlantAddActivity extends AppCompatActivity {
         // 이전 Activity(PL)로 부터 Ids 정보, PListSize 값(식물 목록의 #식물)  가져오기
         Ids = getIntent().getStringExtra("Ids");
         pListSize = getIntent().getIntExtra("PListSize", 1);
-
-        // 식물 이름으로 검색
-
-        // 식물 사진으로 검색
-        Button buttonSearchPlant = (Button)findViewById(R.id.PA_Search);
-        buttonSearchPlant.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://images.google.com"));
-                startActivity(intent);
-            }
-        });
 
         // 카메라 권한 / 허가
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -144,8 +134,9 @@ public class PlantAddActivity extends AppCompatActivity {
         buttonAlbumPhoto.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
-                startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+                startActivityForResult(intent, PICK_FROM_ALBUM);
             }
         });
 
@@ -236,6 +227,46 @@ public class PlantAddActivity extends AppCompatActivity {
 
             } // buttonSavePlant - onClick
         }); // buttonSavePlant - onClickListener
+
+
+        // 식물 이름으로 검색
+        Button buttonSearchPName = (Button)findViewById(R.id.PA_NameSearch);
+        buttonSearchPName.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                // EditText 입력 값 : 식물 이름
+                EditText PN = (EditText) findViewById(R.id.PA_textbox);
+                String plantName = PN.getText().toString();
+                plantUrl = "https://terms.naver.com/search.naver?query=" + plantName + "&searchType=&dicType=&subject=";
+                //https://terms.naver.com/search.naver?query=  &searchType=&dicType=&subject=
+
+                WebView webView = (WebView) findViewById(R.id.PA_WebView);
+                webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
+                webView.loadUrl(plantUrl);
+                webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
+                class WebViewClientClass extends WebViewClient { // 페이지 이동
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView wv, String url){
+                        Log.d("check URL", url);
+                        webView.loadUrl(url);
+                        return true;
+                    }
+                }
+                webView.setWebViewClient(new WebViewClientClass ());
+            }
+        });
+
+        // 식물 사진으로 검색
+        Button buttonSearchPPhoto = (Button)findViewById(R.id.PA_PhotoSearch);
+        buttonSearchPPhoto.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+                startActivity(intent);
+                //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://images.google.com"));
+                //startActivity(intent);
+            }
+        });
 
     } //onCreate
 
@@ -377,6 +408,12 @@ public class PlantAddActivity extends AppCompatActivity {
                     }
                     break;
                 }
+                case PICK_FROM_ALBUM: {
+                    Uri selectedPhotoUri = intent.getData();
+                    plantImageView.setImageURI(selectedPhotoUri);
+                    break;
+                }
+
             }
         }catch (Exception e){
 
@@ -392,51 +429,4 @@ public class PlantAddActivity extends AppCompatActivity {
 
 } // PlantAddActivity - main
 
-/*
-// WebView
-        WebView webView = (WebView) findViewById(R.id.PA_WebView);
-        webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
-        String plantUrl = "https://www.google.co.kr/imghp?hl=ko";
-        //String plantUrl = "https://ko.wikipedia.org/wiki/" + "장미";
-        webView.loadUrl(plantUrl);
-        //webView.loadUrl("https://images.google.com"); // 웹뷰 실행
-        webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
-        class WebViewClientClass extends WebViewClient { // 페이지 이동
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView wv, String url){
-                Log.d("check URL", url);
-                webView.loadUrl(url);
-                return true;
-            }
-        }
-        webView.setWebViewClient(new WebViewClientClass ());
-*/
-/*
-        // 검색 버튼
-        Button buttonSearchPlant = (Button)findViewById(R.id.PA_Search);
-        buttonSearchPlant.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                String plantGroup = "과과과";
-                // EditText 입력 값 : 식물 이름
-                EditText PN = (EditText) findViewById(R.id.PA_textbox);
-                String plantName = PN.getText().toString();
-                String plantUrl = "https://ko.wikipedia.org/wiki/" + plantName;
 
-                try {
-                    Document document = Jsoup.connect(plantUrl).get();
-                    Elements elems = document.select("table.infobox tbody tr:eq(3)").select("td table tbody tr:eq(5)");
-                    for(Element element : elems){
-                        String st = element.select("td:eq(1) a").text();
-                        if(st.substring(st.length()-1).equals("과")){
-                            plantGroup = st;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getApplicationContext(), plantGroup, Toast.LENGTH_LONG).show();
-
-            }
-        });
-*/

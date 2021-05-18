@@ -11,7 +11,7 @@
         android:id="@+id/itemImageView"
         android:layout_width="67dp"
         android:layout_height="86dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
 
         />
@@ -45,28 +45,6 @@
             android:layout_height="38dp"
             android:layout_marginTop="5dp"
             android:textSize="15dp" />
-        <!--
-        <Switch
-            android:id="@+id/itemSwitch"
-            android:layout_width="115dp"
-            android:layout_height="80dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:showText="true"
-            android:text="물"
-            android:textOff="NO"
-            android:textOn="YES" />
-    -->
+
     </LinearLayout>
 </LinearLayout>
-
-<!--
-tools:layout_editor_absoluteX="5dp"
-        tools:layout_editor_absoluteY="15dp"
-        tools:ignore="MissingConstraints,VectorDrawableCompat"
-
-                tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="15dp"
-        tools:ignore="MissingConstraints"
-        -->
