@@ -7,10 +7,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.opengl.GLES30;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.DragAndDropPermissions;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +26,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -96,11 +102,22 @@ public class MyPListAdapter extends BaseAdapter {
         plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
 
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        //StorageReference storageReference = firebaseStorage.getReference().child(imageStr);
 
+        StorageReference storageReference = firebaseStorage.getReference();
+        storageReference.child(imageStr).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(plantPhoto_imageView.getContext()).load(uri)
+                        .override(plantPhoto_imageView.getWidth(), plantPhoto_imageView.getHeight())
+                        .into(plantPhoto_imageView);
+            }
+        });
 
-        byte[] bytes = imageStr.getBytes();
-        Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        plantPhoto_imageView.setImageBitmap(bitmapImage);
+        //byte[] bytes = imageStr.getBytes();
+        //Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        //plantPhoto_imageView.setImageBitmap(bitmapImage);
 
        /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmapImage, plantPhoto_imageView.getWidth(),
                 plantPhoto_imageView.getHeight(), true);

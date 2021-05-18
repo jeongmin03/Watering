@@ -6,6 +6,9 @@ plugins {
 apply plugin: 'com.android.application'
 //apply plugin: 'com.google.gms.google-services'
 
+// build.gradle(:app)
+apply plugin: 'com.google.gms.google-services'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -47,9 +50,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
 
-
-
     // Declare the dependency for the Cloud Storage library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-storage:19.2.2'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+
 }

@@ -180,10 +180,11 @@ public class PlantAddActivity extends AppCompatActivity {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
 
-                plantPhotoInfo = bytes.toString();
+                //plantPhotoInfo = bytes.toString();
 
                 // Cloud Storage에 이미지 Upload
-                StorageReference plantImageRef = storageReference.child(Ids + "/" + plantNum  + "_" + plantName);
+                plantPhotoInfo = Ids + "/" + plantNum  + "_" + plantName;
+                StorageReference plantImageRef = storageReference.child(plantPhotoInfo);
                 UploadTask uploadTask = plantImageRef.putBytes(bytes);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -196,24 +197,9 @@ public class PlantAddActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "식물 사진 Cloud 업로드 성공.", Toast.LENGTH_LONG).show();
                     }
                 });
-                //////
-                Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if(!task.isSuccessful()){
-                            throw task.getException();
-                        }
-                        return plantImageRef.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if(task.isSuccessful()){
-                            downloadURI = task.getResult();
-                        }
-                    }
-                });
 
+
+               // plantPhotoInfo = downloadURI.toString();
 
                 // 식물 생성
                 Plant p = new Plant(plantNum, plantName, plantCycle, plantLastWater, plantPhotoInfo);
