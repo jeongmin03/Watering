@@ -49,13 +49,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class MyPListAdapter extends BaseAdapter {
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    StorageReference storageReference = firebaseStorage.getReference();
 
     private Context context;
     private ArrayList<Plant> Ad_arrP;
 
-    TextView plantName_textView;
-    ImageView plantPhoto_imageView;
-    TextView plantLastWater_textView;
 
     public MyPListAdapter(){}
 
@@ -93,19 +92,15 @@ public class MyPListAdapter extends BaseAdapter {
     @Override // item과 xml을 연결하여 화면에 표시해 주는 부분
     //getView부분에서 반복문 실행되는 것, 순차적으로 한칸씩 화면 구성
     public View getView(int position, View convertView, ViewGroup parent) {
+
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.layoutitem, parent,false);
         }
 
-
-        plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
+        ImageView plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
 
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        //StorageReference storageReference = firebaseStorage.getReference().child(imageStr);
-
-        StorageReference storageReference = firebaseStorage.getReference();
         storageReference.child(imageStr).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -115,18 +110,12 @@ public class MyPListAdapter extends BaseAdapter {
             }
         });
 
-        //byte[] bytes = imageStr.getBytes();
-        //Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        //plantPhoto_imageView.setImageBitmap(bitmapImage);
-
-       /* Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmapImage, plantPhoto_imageView.getWidth(),
-                plantPhoto_imageView.getHeight(), true);
-          plantPhoto_imageView.setImageBitmap(resizedBitmap);
-       */
-
-
-        plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
+        TextView plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
+
+
+        TextView plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
+        plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
 
         Button waterButton = (Button)convertView.findViewById(R.id.Waterbutton);
         waterButton.setOnClickListener(new View.OnClickListener(){
@@ -143,10 +132,12 @@ public class MyPListAdapter extends BaseAdapter {
             }
         });
 
-        plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
-        plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
+
 
         return convertView;
     }
-
 }
+/*  byte[] bytes = imageStr.getBytes();
+            Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            plantPhoto_imageView.setImageBitmap(bitmapImage);
+        */

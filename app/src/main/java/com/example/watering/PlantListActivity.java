@@ -80,7 +80,7 @@ public class PlantListActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), changedPlant.get(position).getPlantName() + "에 물을 줬습니다.", Toast.LENGTH_LONG).show();
                 databaseReference.child("Watering").child(Ids).child(changedPlant.get(position).getPlantNum()).child("plantLastWater").setValue(changedPlant.get(position).getPlantLastWater());
-                setAlarmNotification(changedPlant.get(position).getPlantName());
+                setAlarmNotification(changedPlant.get(position).getPlantName(), changedPlant.get(position).getPlantCycle());
             }
         });
 
@@ -88,7 +88,7 @@ public class PlantListActivity extends AppCompatActivity {
     } //onCreate
 
     // 알림 설정
-    private  void setAlarmNotification(String plantName){
+    private  void setAlarmNotification(String plantName, int plantCycle){
 
         Intent receiverIntent = new Intent(PlantListActivity.this, AlarmReceiver.class);
         receiverIntent.putExtra("PlantName", plantName);
@@ -96,7 +96,7 @@ public class PlantListActivity extends AppCompatActivity {
 
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, +1);
+        calendar.add(Calendar.MINUTE, +plantCycle);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
