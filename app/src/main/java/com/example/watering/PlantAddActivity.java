@@ -235,7 +235,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 12); //calendar.set(Calendar.MINUTE, 07);
-        calendar.add(Calendar.MINUTE, +plantCycle);
+        calendar.add(Calendar.DATE, +plantCycle);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);

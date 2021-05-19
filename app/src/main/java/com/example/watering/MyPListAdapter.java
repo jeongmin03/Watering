@@ -1,51 +1,23 @@
 package com.example.watering;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.opengl.GLES30;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import android.view.DragAndDropPermissions;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,9 +29,10 @@ public class MyPListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Plant> Ad_arrP;
 
-    public MyPListAdapter(){}
+    public MyPListAdapter() {
+    }
 
-    public MyPListAdapter(Context context, int layout, ArrayList<Plant> Ad_arrP){
+    public MyPListAdapter(Context context, int layout, ArrayList<Plant> Ad_arrP) {
         this.context = context;
         this.Ad_arrP = Ad_arrP;
     }
@@ -68,9 +41,11 @@ public class MyPListAdapter extends BaseAdapter {
     public interface OnItemChanged {
         public void onItemChanged(ArrayList<Plant> arr, int position);
     }
+
     private OnItemChanged onItemChanged;
-    public void setOnItemChanged(OnItemChanged onItemChanged){
-        this.onItemChanged= onItemChanged;
+
+    public void setOnItemChanged(OnItemChanged onItemChanged) {
+        this.onItemChanged = onItemChanged;
     }
     /////
 
@@ -95,13 +70,13 @@ public class MyPListAdapter extends BaseAdapter {
     //getView부분에서 반복문 실행되는 것, 순차적으로 한칸씩 화면 구성
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(convertView == null){
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.layoutitem, parent,false);
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.layoutitem, parent, false);
         }
 
         // PlantPhoto - ImageView, Firebase Cloud Storage
-        ImageView plantPhoto_imageView = (ImageView)convertView.findViewById(R.id.itemImageView);
+        ImageView plantPhoto_imageView = (ImageView) convertView.findViewById(R.id.itemImageView);
         String imageStr = Ad_arrP.get(position).getPlantPhotoInfo();
 
         storageReference.child(imageStr).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -114,24 +89,24 @@ public class MyPListAdapter extends BaseAdapter {
         });
 
         // PlantName - TextView
-        TextView plantName_textView = (TextView)convertView.findViewById(R.id.itemTextView);
+        TextView plantName_textView = (TextView) convertView.findViewById(R.id.itemTextView);
         plantName_textView.setText(Ad_arrP.get(position).getPlantName());
 
         // LastWater - TextView
-        TextView plantLastWater_textView = (TextView)convertView.findViewById(R.id.LastWaterTextView);
+        TextView plantLastWater_textView = (TextView) convertView.findViewById(R.id.LastWaterTextView);
         plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
 
         // Watering - Button
-        Button waterButton = (Button)convertView.findViewById(R.id.Waterbutton);
-        waterButton.setOnClickListener(new View.OnClickListener(){
+        Button waterButton = (Button) convertView.findViewById(R.id.Waterbutton);
+        waterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Ad_arrP.get(position).setPlantWaterCheck("true");
                 Date today = new Date();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
                 Ad_arrP.get(position).setPlantLastWater(simpleDateFormat.format(today));
                 plantLastWater_textView.setText("Latest Water : " + Ad_arrP.get(position).getPlantLastWater());
-                if(onItemChanged != null){
+                if (onItemChanged != null) {
                     onItemChanged.onItemChanged(Ad_arrP, position);
                 }
             }

@@ -84,7 +84,7 @@ public class PlantListActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantListActivity.this, 0, receiverIntent, 0);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, +plantCycle);
+        calendar.add(Calendar.DATE, +plantCycle);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
