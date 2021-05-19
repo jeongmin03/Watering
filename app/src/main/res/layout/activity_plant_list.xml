@@ -12,37 +12,37 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Plant Watering"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="left"
+            android:text="  Plant List"
             android:textSize="30dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" >
 
                 <Button
                     android:id="@+id/PL_photo"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/button_designs"
+                    android:textColor="#ffffff"
                     android:layout_marginLeft="20dp"
                     android:layout_gravity="left"
-                    android:text="식물 추가" />
+                    android:text="ADD PLANT" />
 
                 <Button
                     android:id="@+id/PL_logOut"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/button_designs"
+                    android:textColor="#ffffff"
                     android:layout_gravity="right"
                     android:layout_marginLeft="120dp"
-                    android:text="로그아웃" />
-                <!--
-                <Button
-            android:background="@drawable/button_design"
-                -->
+                    android:text="LOGOUT" />
         </LinearLayout>
 
         <ListView

@@ -1,24 +1,12 @@
 package com.example.watering;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.app.AlarmManager;
-import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,28 +16,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.CalendarContract;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,17 +41,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class PlantAddActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -105,8 +83,8 @@ public class PlantAddActivity extends AppCompatActivity {
         pListSize = getIntent().getIntExtra("PListSize", 1);
 
         // 카메라 권한 / 허가
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 Log.d("PlantAddActivity", "권한 설정 완료");
             } else {
@@ -117,11 +95,12 @@ public class PlantAddActivity extends AppCompatActivity {
         }
 
         // 카메라 버튼 : 사진 촬영
-        Button buttonCameraPhoto = (Button)findViewById(R.id.PA_Camera);
-        buttonCameraPhoto.setOnClickListener(new View.OnClickListener(){
+        Button buttonCameraPhoto = (Button) findViewById(R.id.PA_Camera);
+        buttonCameraPhoto.setBackgroundResource(R.drawable.ic_baseline_photo_camera_24);
+        buttonCameraPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                switch (v.getId()){
+            public void onClick(View v) {
+                switch (v.getId()) {
                     case R.id.PA_Camera:
                         dispatchTakePictureIntent();
                         break;
@@ -130,26 +109,40 @@ public class PlantAddActivity extends AppCompatActivity {
         });
 
         // 앨범 버튼 : 앨범에서 사진 가져오기
-        Button buttonAlbumPhoto = (Button)findViewById(R.id.PA_Album);
-        buttonAlbumPhoto.setOnClickListener(new View.OnClickListener(){
+        Button buttonAlbumPhoto = (Button) findViewById(R.id.PA_Album);
+        buttonAlbumPhoto.setBackgroundResource(R.drawable.ic_baseline_photo_24);
+        buttonAlbumPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_FROM_ALBUM);
             }
         });
 
+        // 식물 사진으로 검색
+        Button buttonSearchPPhoto = (Button) findViewById(R.id.PA_PhotoSearch);
+        buttonSearchPPhoto.setBackgroundResource(R.drawable.ic_baseline_search_24);
+        buttonSearchPPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+                startActivity(intent);
+                //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://images.google.com"));
+                //startActivity(intent);
+            }
+        });
+
         // 촬영한 사진 이미지뷰
-        plantImageView = (ImageView)findViewById(R.id.PA_IMAGE);
+        plantImageView = (ImageView) findViewById(R.id.PA_IMAGE);
 
         // 저장 버튼 : 식물 생성 - firebase 저장
-        Button buttonSavePlant = (Button)findViewById(R.id.PA_SavePlant);
-        buttonSavePlant.setOnClickListener(new View.OnClickListener(){
+        Button buttonSavePlant = (Button) findViewById(R.id.PA_SavePlant);
+        buttonSavePlant.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
-            public void onClick(View v){
-                plantNum = "plant" + String.valueOf(pListSize+1);
+            public void onClick(View v) {
+                plantNum = "plant" + String.valueOf(pListSize + 1);
 
                 // 식물 이름 정보, 물주는 주기 정보
                 EditText PL = (EditText) findViewById(R.id.PA_plantName);
@@ -164,13 +157,13 @@ public class PlantAddActivity extends AppCompatActivity {
 
                 // 식물 사진 정보
                 Drawable drawable = plantImageView.getDrawable();
-                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] bytes = baos.toByteArray();
 
                 // Cloud Storage에 이미지 Upload
-                plantPhotoInfo = Ids + "/" + plantNum  + "_" + plantName;
+                plantPhotoInfo = Ids + "/" + plantNum + "_" + plantName;
                 StorageReference plantImageRef = storageReference.child(plantPhotoInfo);
                 UploadTask uploadTask = plantImageRef.putBytes(bytes);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -197,17 +190,17 @@ public class PlantAddActivity extends AppCompatActivity {
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             Intent intent = new Intent(getApplicationContext(), PlantListActivity.class);
 
                             Long PCount_long = postSnapshot.child(Ids).getChildrenCount();
                             int PCount_int = Long.valueOf(PCount_long).intValue() - 2;
                             //로그인한 해당 Ids의 식물 이름 목록 가져오기 + ArrList에 저장
-                            for(int j = 0; j < PCount_int; j++){
-                                String pStr = "plant" + String.valueOf(j+1);
+                            for (int j = 0; j < PCount_int; j++) {
+                                String pStr = "plant" + String.valueOf(j + 1);
                                 String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
                                 String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
-                                int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
+                                int plantCycle = Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
                                 //String plantPhotoInfo = "null";
                                 String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
                                 String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
@@ -219,6 +212,7 @@ public class PlantAddActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.w("PlantListActivity", "Failed", error.toException()); //log 로 실패 알림
@@ -229,49 +223,10 @@ public class PlantAddActivity extends AppCompatActivity {
         }); // buttonSavePlant - onClickListener
 
 
-        // 식물 이름으로 검색
-        Button buttonSearchPName = (Button)findViewById(R.id.PA_NameSearch);
-        buttonSearchPName.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                // EditText 입력 값 : 식물 이름
-                EditText PN = (EditText) findViewById(R.id.PA_textbox);
-                String plantName = PN.getText().toString();
-                plantUrl = "https://terms.naver.com/search.naver?query=" + plantName + "&searchType=&dicType=&subject=";
-                //https://terms.naver.com/search.naver?query=  &searchType=&dicType=&subject=
-
-                WebView webView = (WebView) findViewById(R.id.PA_WebView);
-                webView.getSettings().setJavaScriptEnabled(true); // 자바 스크립트 허용
-                webView.loadUrl(plantUrl);
-                webView.setWebChromeClient(new WebChromeClient()); // 웹뷰에서 크롬 실행가능하도록
-                class WebViewClientClass extends WebViewClient { // 페이지 이동
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView wv, String url){
-                        Log.d("check URL", url);
-                        webView.loadUrl(url);
-                        return true;
-                    }
-                }
-                webView.setWebViewClient(new WebViewClientClass ());
-            }
-        });
-
-        // 식물 사진으로 검색
-        Button buttonSearchPPhoto = (Button)findViewById(R.id.PA_PhotoSearch);
-        buttonSearchPPhoto.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
-                startActivity(intent);
-                //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://images.google.com"));
-                //startActivity(intent);
-            }
-        });
-
     } //onCreate
 
     // 알림 설정
-    private  void setAlarmNotification(String plantName, int plantCycle){
+    private void setAlarmNotification(String plantName, int plantCycle) {
         Intent receiverIntent = new Intent(PlantAddActivity.this, AlarmReceiver.class);
         receiverIntent.putExtra("PlantName", plantName);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(PlantAddActivity.this, 0, receiverIntent, 0);
@@ -280,7 +235,7 @@ public class PlantAddActivity extends AppCompatActivity {
         //calendar.set(Calendar.HOUR_OF_DAY, 12); //calendar.set(Calendar.MINUTE, 07);
         calendar.add(Calendar.MINUTE, +plantCycle);
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
 
          /* Activity에서 Adapter로 전달
@@ -289,7 +244,7 @@ public class PlantAddActivity extends AppCompatActivity {
     }
 
     ///// 카메라 촬영 /////
-    private File createImageFile() throws IOException{
+    private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -330,7 +285,7 @@ public class PlantAddActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("PlantAddActivity", "onRequestPermissionsResult");
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1]
-                == PackageManager.PERMISSION_GRANTED ) {
+                == PackageManager.PERMISSION_GRANTED) {
             Log.d("PlantAddActivity", "Permission: " + permissions[0] + "was " + grantResults[0]);
         }
     }
@@ -339,24 +294,24 @@ public class PlantAddActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        try{
-            switch(requestCode){
-                case REQUEST_TAKE_PHOTO:{
-                    if(resultCode == RESULT_OK){
+        try {
+            switch (requestCode) {
+                case REQUEST_TAKE_PHOTO: {
+                    if (resultCode == RESULT_OK) {
                         File file = new File(currentPhotoPath);
                         Bitmap bitmap;
 
-                        if(Build.VERSION.SDK_INT >= 29){
+                        if (Build.VERSION.SDK_INT >= 29) {
                             ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver()
-                            , Uri.fromFile(file));
-                            try{
+                                    , Uri.fromFile(file));
+                            try {
                                 bitmap = ImageDecoder.decodeBitmap(source);
-                                if(bitmap != null){ //plantImageView.setImageBitmap(bitmap);
+                                if (bitmap != null) { //plantImageView.setImageBitmap(bitmap);
                                     ExifInterface ei = new ExifInterface(currentPhotoPath);
                                     int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                                             ExifInterface.ORIENTATION_UNDEFINED);
                                     Bitmap rotatedBitmap = null;
-                                    switch(orientation){
+                                    switch (orientation) {
                                         case ExifInterface.ORIENTATION_ROTATE_90:
                                             rotatedBitmap = rotateImage(bitmap, 90);
                                             break;
@@ -373,19 +328,18 @@ public class PlantAddActivity extends AppCompatActivity {
                                     plantImageView.setImageBitmap(rotatedBitmap);
 
                                 }
-                            }catch(IOException e){
+                            } catch (IOException e) {
                                 //
                             }
-                        }
-                        else{
-                            try{
+                        } else {
+                            try {
                                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
-                                if(bitmap != null){ //plantImageView.setImageBitmap(bitmap);
+                                if (bitmap != null) { //plantImageView.setImageBitmap(bitmap);
                                     ExifInterface ei = new ExifInterface(currentPhotoPath);
                                     int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                                             ExifInterface.ORIENTATION_UNDEFINED);
                                     Bitmap rotatedBitmap = null;
-                                    switch(orientation){
+                                    switch (orientation) {
                                         case ExifInterface.ORIENTATION_ROTATE_90:
                                             rotatedBitmap = rotateImage(bitmap, 90);
                                             break;
@@ -401,7 +355,7 @@ public class PlantAddActivity extends AppCompatActivity {
                                     }
                                     plantImageView.setImageBitmap(rotatedBitmap);
                                 }
-                            }catch (IOException e){
+                            } catch (IOException e) {
                                 //
                             }
                         }
@@ -415,12 +369,12 @@ public class PlantAddActivity extends AppCompatActivity {
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     } // onActivityResult
 
-    public static Bitmap rotateImage(Bitmap source, float degree){
+    public static Bitmap rotateImage(Bitmap source, float degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight()

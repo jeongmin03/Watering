@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,120 +8,113 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Plant Watering"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="left"
+            android:text="  Plant Add"
             android:textSize="30dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/PA_Camera"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_baseline_photo_camera_24" />
+
+            <Button
+                android:id="@+id/PA_Album"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_baseline_photo_24" />
+
+            <Button
+                android:id="@+id/PA_PhotoSearch"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_baseline_search_24" />
+
+            <Button
+                android:id="@+id/PA_logOut"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:background="@drawable/button_designs"
+                android:text="LOGOUT"
+                android:textColor="#ffffff" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp" >
-
-                <Button
-                    android:id="@+id/PA_Camera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="식물 촬영" />
-
-                <Button
-                    android:id="@+id/PA_Album"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="앨범" />
-                <Button
-                    android:id="@+id/PA_logOut"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="60dp"
-                    android:text="로그아웃" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
+            <ImageView
+                android:id="@+id/PA_IMAGE"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" >
-                <ImageView
-                    android:id="@+id/PA_IMAGE"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                />
+                android:src="@drawable/imageview_designs" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/PA_plantName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ems="15"
+                    android:hint="   Plant Name" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginLeft="10dp"
-                    android:orientation="vertical">
-                    <EditText
-                        android:id="@+id/PA_plantName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:ems="8"
-                        android:hint=" 식물 이름" />
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
                     <EditText
                         android:id="@+id/PA_plantCycle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:ems="8"
-                        android:hint=" 물주는 주기" />
+                        android:layout_marginLeft="15dp"
+                        android:ems="9"
+                        android:hint="   Watering Cycle" />
+
                     <Button
                         android:id="@+id/PA_SavePlant"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/button_designs"
                         android:ems="8"
-                        android:text="저장" />
+                        android:text="SAVE"
+                        android:textColor="#ffffff" />
+
                 </LinearLayout>
-
-            </LinearLayout>
-            <!-- -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp" >
-                <EditText
-                    android:id="@+id/PA_textbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:ems="6"
-                    android:hint=" 식물 이름 검색" />
-                <Button
-                    android:id="@+id/PA_NameSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="검색" />
-
-                <Button
-                    android:id="@+id/PA_PhotoSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:text="사진 검색" />
             </LinearLayout>
 
-            <WebView
-                android:id="@+id/PA_WebView"
-                android:layout_width="match_parent"
-                android:layout_height="346dp" />
 
         </LinearLayout>
 
