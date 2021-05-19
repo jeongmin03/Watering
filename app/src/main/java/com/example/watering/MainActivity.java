@@ -1,8 +1,5 @@
 package com.example.watering;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,41 +59,45 @@ public class MainActivity extends AppCompatActivity {
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             IdCount_long = postSnapshot.getChildrenCount();
                             IdCount_int = (Long.valueOf(IdCount_long).intValue());
-                            for(int i = 0; i < IdCount_int; i++){
-                                Ids = "Id" + String.valueOf(i+1);
+                            boolean isLoginSuccess = false;
+                            for (int i = 0; i < IdCount_int; i++) {
+                                Ids = "Id" + String.valueOf(i + 1);
                                 String stI = postSnapshot.child(Ids).child("personId").getValue().toString();
                                 String stP = postSnapshot.child(Ids).child("personPasswd").getValue().toString();
-                                if(LoginId.equals("") || LoginPwd.equals("")) {
-                                    Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show();
-                                }
-                                if((stI.equals(LoginId))&& (stP.equals(LoginPwd))){
+
+                                if ((stI.equals(LoginId)) && (stP.equals(LoginPwd))) {
                                     Intent intent = new Intent(getApplicationContext(), PlantListActivity.class);
 
                                     PCount_long = postSnapshot.child(Ids).getChildrenCount();
                                     PCount_int = Long.valueOf(PCount_long).intValue() - 2;
                                     //로그인한 해당 Ids의 식물 이름 목록 가져오기 + ArrList에 저장
-                                    for(int j = 0; j < PCount_int; j++){
-                                        String pStr = "plant" + String.valueOf(j+1);
+                                    for (int j = 0; j < PCount_int; j++) {
+                                        String pStr = "plant" + String.valueOf(j + 1);
                                         String plantName = postSnapshot.child(Ids).child(pStr).child("plantName").getValue().toString();
                                         String plantLastWater = postSnapshot.child(Ids).child(pStr).child("plantLastWater").getValue().toString();
-                                        int plantCycle =  Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
+                                        int plantCycle = Integer.parseInt(postSnapshot.child(Ids).child(pStr).child("plantCycle").getValue().toString());
                                         //String plantPhotoInfo = "null";
                                         String plantPhotoInfo = postSnapshot.child(Ids).child(pStr).child("plantPhotoInfo").getValue().toString();
                                         String plantWaterCheck = postSnapshot.child(Ids).child(pStr).child("plantWaterCheck").getValue().toString();
                                         Plant p = new Plant(pStr, plantName, plantCycle, plantLastWater, plantPhotoInfo, plantWaterCheck);
                                         PArrayList.add(p);
                                     }
+                                    isLoginSuccess = true;
                                     //해당 Ids의 식물 리스트와 Ids 값 plantListActivity로 전달
                                     intent.putExtra("arr", PArrayList);
                                     intent.putExtra("Ids", Ids);
                                     startActivity(intent);
                                 } // 아이디 비밀번호 확인
                             }
+                            if (!isLoginSuccess) {
+                                Toast.makeText(getApplicationContext(), "아이디 또는 비밀번호를 확인해주세요.", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.w("MainActivity", "Failed Login", error.toException()); //log 로 실패 알림

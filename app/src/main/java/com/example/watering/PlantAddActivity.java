@@ -73,6 +73,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
     private String plantUrl = null;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +136,7 @@ public class PlantAddActivity extends AppCompatActivity {
 
         // 촬영한 사진 이미지뷰
         plantImageView = (ImageView) findViewById(R.id.PA_IMAGE);
+        plantImageView.setClipToOutline(true);
 
         // 저장 버튼 : 식물 생성 - firebase 저장
         Button buttonSavePlant = (Button) findViewById(R.id.PA_SavePlant);

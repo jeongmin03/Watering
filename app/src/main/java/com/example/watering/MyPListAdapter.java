@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.opengl.GLES30;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -88,6 +90,7 @@ public class MyPListAdapter extends BaseAdapter {
         return position;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override // item과 xml을 연결하여 화면에 표시해 주는 부분
     //getView부분에서 반복문 실행되는 것, 순차적으로 한칸씩 화면 구성
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -134,6 +137,7 @@ public class MyPListAdapter extends BaseAdapter {
             }
         });
 
+        convertView.setBackgroundResource(R.drawable.listview_designs);
         return convertView;
     }
 }
